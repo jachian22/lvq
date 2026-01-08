@@ -1,0 +1,174 @@
+import { useCart, useLocale } from "~/contexts";
+import { SimplePrice } from "~/components/product/PriceDisplay";
+
+/**
+ * CartDrawer component
+ *
+ * Slide-out cart drawer showing cart contents and checkout button.
+ */
+export function CartDrawer() {
+  const { cart, isOpen, closeCart, updateItem, removeItem, goToCheckout, isLoading } = useCart();
+  const { formatPrice } = useLocale();
+
+  if (!isOpen) {
+    return null;
+  }
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/50 z-40"
+        onClick={closeCart}
+      />
+
+      {/* Drawer */}
+      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl z-50 flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-lg font-semibold">Your Cart</h2>
+          <button
+            onClick={closeCart}
+            className="p-2 text-gray-400 hover:text-gray-600"
+            aria-label="Close cart"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Cart contents */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {cart.lines.length === 0 ? (
+            <div className="text-center py-12">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 mx-auto text-gray-300 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
+              </svg>
+              <p className="text-gray-500">Your cart is empty</p>
+            </div>
+          ) : (
+            <ul className="space-y-4">
+              {cart.lines.map((item) => (
+                <li key={item.id} className="flex gap-4">
+                  {/* Product image */}
+                  <div className="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                    {item.merchandise.product.featuredImage ? (
+                      <img
+                        src={item.merchandise.product.featuredImage.url}
+                        alt={item.merchandise.product.featuredImage.altText ?? ""}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        No image
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Product details */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-sm truncate">
+                      {item.merchandise.product.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm">
+                      {item.merchandise.title}
+                    </p>
+                    <p className="text-sm font-medium mt-1">
+                      {formatPrice(parseFloat(item.merchandise.price.amount))}
+                    </p>
+
+                    {/* Quantity controls */}
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => updateItem(item.id, item.quantity - 1)}
+                        disabled={isLoading}
+                        className="w-6 h-6 rounded border text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                      >
+                        -
+                      </button>
+                      <span className="w-8 text-center text-sm">{item.quantity}</span>
+                      <button
+                        onClick={() => updateItem(item.id, item.quantity + 1)}
+                        disabled={isLoading}
+                        className="w-6 h-6 rounded border text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                      >
+                        +
+                      </button>
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        disabled={isLoading}
+                        className="ml-auto text-red-500 hover:text-red-700 text-sm disabled:opacity-50"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Footer with totals and checkout */}
+        {cart.lines.length > 0 && (
+          <div className="border-t p-4 space-y-4">
+            {/* Discount codes */}
+            {cart.discountCodes.length > 0 && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-green-600">✓</span>
+                <span>
+                  {cart.discountCodes.map((dc) => dc.code).join(", ")} applied
+                </span>
+              </div>
+            )}
+
+            {/* Subtotal */}
+            <div className="flex justify-between text-sm">
+              <span>Subtotal</span>
+              <span>
+                {cart.subtotal && formatPrice(parseFloat(cart.subtotal.amount))}
+              </span>
+            </div>
+
+            {/* Shipping note */}
+            <p className="text-sm text-gray-500">
+              Shipping calculated at checkout
+            </p>
+
+            {/* Checkout button */}
+            <button
+              onClick={goToCheckout}
+              disabled={isLoading || !cart.checkoutUrl}
+              className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50"
+            >
+              {isLoading ? "Loading..." : "Checkout"}
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}

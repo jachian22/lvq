@@ -510,10 +510,290 @@ See: `docs/features/CHATBOT_ADVANCED.md` for detailed specs when ready
 - Show "Save X%" badges on product/collection pages
 - Calculate discounted prices before add-to-cart
 
-#### 4.2 Promotional Display
-- Store-wide banners for active promotions
-- Countdown timers for limited offers
-- Collection-level discount indicators
+#### 4.2 Promotional Display & Auto-Apply
+
+**URL-Based Promo Activation:**
+
+Customers clicking through from Meta ads or email campaigns should have their promo automatically applied:
+
+```
+https://lavistique.nl/products/king-portrait?promo=SUMMER20
+https://lavistique.nl?promo=WELCOME10
+```
+
+**How it works:**
+1. Customer clicks ad/email with `?promo=CODE` parameter
+2. Middleware captures promo code, stores in cookie (30-day expiry)
+3. Site displays persistent "SUMMER20 applied - 20% off!" banner
+4. **ALL prices site-wide** show strikethrough with discounted price
+5. When customer adds to cart, discount code is auto-applied to Shopify cart
+
+**Site-Wide Discount Experience:**
+
+The customer should feel the gravity of their discount **everywhere they browse**:
+
+- **Homepage**: Featured products show discounted prices
+- **Collection pages**: Every product card shows ~~€79~~ €63.20
+- **Product pages**: Main price displays discount prominently
+- **Wizard steps**: Live price calculator reflects discount
+- **Cart**: Line items and totals show savings
+- **Persistent banner**: Reminds customer their discount is active
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  🎉 SUMMER20 applied - 20% off your order!           [✕]   │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  COLLECTION: ROYAL PORTRAITS                                │
+│                                                             │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐       │
+│  │ [img]   │  │ [img]   │  │ [img]   │  │ [img]   │       │
+│  │  King   │  │ Admiral │  │ Duchess │  │  Duke   │       │
+│  │ ̶€̶7̶9̶.̶0̶0̶  │  │ ̶€̶7̶9̶.̶0̶0̶  │  │ ̶€̶8̶9̶.̶0̶0̶  │  │ ̶€̶7̶9̶.̶0̶0̶  │       │
+│  │ €63.20  │  │ €63.20  │  │ €71.20  │  │ €63.20  │       │
+│  └─────────┘  └─────────┘  └─────────┘  └─────────┘       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Price Display Component:**
+
+```tsx
+// components/product/PriceDisplay.tsx
+// Used EVERYWHERE prices are shown (cards, pages, cart, wizard)
+
+interface PriceDisplayProps {
+  price: number;
+  productId: string;
+  collectionIds: string[];  // Product can belong to multiple collections
+}
+
+export function PriceDisplay({ price, productId, collectionIds }: PriceDisplayProps) {
+  const { activePromo, calculateDiscount } = usePromo();
+  const { original, discounted, percentage, qualifies } = calculateDiscount(
+    price,
+    productId,
+    collectionIds
+  );
+
+  // No active promo OR this product doesn't qualify
+  if (!activePromo || !qualifies) {
+    return <span className="font-bold">{formatPrice(price)}</span>;
+  }
+
+  // Product qualifies - show strikethrough pricing
+  return (
+    <div className="flex flex-col">
+      <span className="line-through text-gray-400 text-sm">
+        {formatPrice(original)}
+      </span>
+      <div className="flex items-center gap-2">
+        <span className="text-red-600 font-bold text-lg">
+          {formatPrice(discounted)}
+        </span>
+        <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded">
+          -{percentage}%
+        </span>
+      </div>
+    </div>
+  );
+}
+```
+
+**Usage in Product Card:**
+
+```tsx
+// Each product card passes its ID and collection memberships
+<PriceDisplay
+  price={product.priceRange.minVariantPrice.amount}
+  productId={product.id}
+  collectionIds={product.collections.edges.map(e => e.node.id)}
+/>
+```
+
+**Promo Context Provider:**
+
+```tsx
+// contexts/PromoContext.tsx
+export const PromoContext = createContext<{
+  activePromo: PromoCode | null;
+  applyPromo: (code: string) => Promise<void>;
+  clearPromo: () => void;
+  calculateDiscount: (
+    price: number,
+    productId: string,
+    collectionIds: string[]
+  ) => {
+    original: number;
+    discounted: number;
+    savings: number;
+    percentage: number;
+    qualifies: boolean;  // Whether this product qualifies for the discount
+  };
+}>();
+
+// Middleware captures promo from URL and sets cookie
+// PromoProvider reads cookie on mount, validates against synced discount rules
+// calculateDiscount() checks if product qualifies based on discount targeting
+```
+
+**Discount Targeting Logic:**
+
+Supports three discount scopes:
+- **Site-wide** (`appliesTo: 'all'`) - Every product shows discounted price
+- **Collection-specific** (`appliesTo: 'collection'`) - Only products in targeted collections
+- **Product-specific** (`appliesTo: 'product'`) - Only specific products
+
+```tsx
+// lib/discounts.ts
+export function calculateDiscount(
+  activePromo: PromoCode | null,
+  price: number,
+  productId: string,
+  collectionIds: string[]
+): DiscountResult {
+  if (!activePromo) {
+    return { original: price, discounted: price, savings: 0, percentage: 0, qualifies: false };
+  }
+
+  // Check if this product qualifies for the discount
+  const qualifies =
+    activePromo.appliesTo === 'all' ||
+    (activePromo.appliesTo === 'collection' &&
+      activePromo.targetIds.some(id => collectionIds.includes(id))) ||
+    (activePromo.appliesTo === 'product' &&
+      activePromo.targetIds.includes(productId));
+
+  if (!qualifies) {
+    return { original: price, discounted: price, savings: 0, percentage: 0, qualifies: false };
+  }
+
+  const discounted = price * (1 - activePromo.value / 100);
+  return {
+    original: price,
+    discounted,
+    savings: price - discounted,
+    percentage: activePromo.value,
+    qualifies: true,
+  };
+}
+```
+
+**Auto-Apply to Cart:**
+
+```tsx
+// When creating or updating cart, automatically include the discount code
+const createCartWithPromo = async (lines: CartLine[]) => {
+  const cart = await shopify.cartCreate({
+    input: {
+      lines,
+      // Auto-apply active promo code
+      discountCodes: activePromo ? [activePromo.code] : [],
+    },
+  });
+  return cart;
+};
+```
+
+**Cart with Active Promo:**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  YOUR CART                                    SUMMER20 ✓    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌────────┐  King Portrait                                 │
+│  │[thumb] │  30×40cm, Black Frame                          │
+│  └────────┘  ̶€̶1̶0̶4̶.̶0̶0̶  €83.20                              │
+│             [Edit] [Remove]                                 │
+│                                                             │
+│  ─────────────────────────────────────────                 │
+│  Subtotal:                           ̶€̶1̶0̶4̶.̶0̶0̶    €83.20   │
+│  You're saving:                              €20.80 (20%)  │
+│  Shipping:                              Calculated next     │
+│  ─────────────────────────────────────────                 │
+│                                                             │
+│                                    [CHECKOUT →]             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Persistent Promo Banner:**
+
+```tsx
+// components/layout/PromoBanner.tsx
+// Shown at top of every page when promo is active
+
+export function PromoBanner() {
+  const { activePromo, clearPromo } = usePromo();
+
+  if (!activePromo) return null;
+
+  // Dynamic message based on discount scope
+  const getMessage = () => {
+    switch (activePromo.appliesTo) {
+      case 'all':
+        return `${activePromo.value}% off your entire order!`;
+      case 'collection':
+        return `${activePromo.value}% off ${activePromo.targetName}!`;  // e.g., "Royal Portraits"
+      case 'product':
+        return `${activePromo.value}% off selected products!`;
+      default:
+        return `${activePromo.value}% off!`;
+    }
+  };
+
+  return (
+    <div className="bg-gradient-to-r from-red-600 to-pink-600 text-white py-2 px-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <span>
+          🎉 <strong>{activePromo.code}</strong> applied — {getMessage()}
+        </span>
+        <button onClick={clearPromo} className="text-white/70 hover:text-white">
+          ✕
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+**Collection Page with Targeted Discount:**
+
+When a discount targets a specific collection, that collection page shows ALL products with strikethrough pricing:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  🎉 ROYAL20 applied — 20% off Royal Portraits!       [✕]   │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  COLLECTION: ROYAL PORTRAITS  ← All products discounted    │
+│                                                             │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐       │
+│  │ [img]   │  │ [img]   │  │ [img]   │  │ [img]   │       │
+│  │  King   │  │ Admiral │  │ Duchess │  │  Duke   │       │
+│  │ ̶€̶7̶9̶.̶0̶0̶  │  │ ̶€̶7̶9̶.̶0̶0̶  │  │ ̶€̶8̶9̶.̶0̶0̶  │  │ ̶€̶7̶9̶.̶0̶0̶  │       │
+│  │ €63.20  │  │ €63.20  │  │ €71.20  │  │ €63.20  │       │
+│  └─────────┘  └─────────┘  └─────────┘  └─────────┘       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  COLLECTION: MILITARY PORTRAITS  ← Not targeted, no discount│
+│                                                             │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐       │
+│  │ [img]   │  │ [img]   │  │ [img]   │  │ [img]   │       │
+│  │ General │  │ Captain │  │ Colonel │  │ Admiral │       │
+│  │ €79.00  │  │ €79.00  │  │ €89.00  │  │ €79.00  │       │
+│  │         │  │         │  │         │  │         │       │
+│  └─────────┘  └─────────┘  └─────────┘  └─────────┘       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Additional Display Features:**
+- Countdown timers for limited-time offers
+- "Ends in X hours" urgency messaging
+- Savings summary in cart ("You're saving €20.80!")
 
 ### Phase 5: Automation Flows (Backlog)
 

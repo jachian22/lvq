@@ -3,42 +3,89 @@ import { z } from "zod";
 
 export const env = createEnv({
   /**
-   * Specify your server-side environment variables schema here. This way you can ensure the app
-   * isn't built with invalid env vars.
+   * Server-side environment variables schema
    */
   server: {
-    DATABASE_URL: z.string().url(),
+    // Database (SQLite file or Turso URL)
+    DATABASE_URL: z.string().min(1),
+    DATABASE_AUTH_TOKEN: z.string().optional(),
+
+    // Node environment
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+
+    // Shopify Admin API (for webhooks and discount sync)
+    SHOPIFY_ADMIN_API_TOKEN: z.string().optional(),
+    SHOPIFY_WEBHOOK_SECRET: z.string().optional(),
+
+    // OpenRouter (for Kimi-K2 chatbot)
+    OPENROUTER_API_KEY: z.string().optional(),
+
+    // Resend (email)
+    RESEND_API_KEY: z.string().optional(),
+    RESEND_WEBHOOK_SECRET: z.string().optional(),
+
+    // UploadThing
+    UPLOADTHING_TOKEN: z.string().optional(),
+
+    // Inngest (background jobs)
+    INNGEST_EVENT_KEY: z.string().optional(),
+    INNGEST_SIGNING_KEY: z.string().optional(),
+
+    // Admin authentication
+    ADMIN_PASSWORD: z.string().optional(),
+
+    // Site URL for absolute URLs in emails
+    SITE_URL: z.string().url().optional(),
   },
 
   /**
-   * Specify your client-side environment variables schema here. This way you can ensure the app
-   * isn't built with invalid env vars. To expose them to the client, prefix them with
-   * `NEXT_PUBLIC_`.
+   * Client-side environment variables schema
+   * Prefix with NEXT_PUBLIC_ to expose to client
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    // Shopify Storefront API (public)
+    NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: z.string().min(1),
+    NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN: z.string().min(1),
+
+    // Site URL for client-side use
+    NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   },
 
   /**
-   * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
-   * middlewares) or client-side so we need to destruct manually.
+   * Runtime environment variables
+   * Must be destructured manually for edge runtime compatibility
    */
   runtimeEnv: {
+    // Server
     DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_AUTH_TOKEN: process.env.DATABASE_AUTH_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    SHOPIFY_ADMIN_API_TOKEN: process.env.SHOPIFY_ADMIN_API_TOKEN,
+    SHOPIFY_WEBHOOK_SECRET: process.env.SHOPIFY_WEBHOOK_SECRET,
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_WEBHOOK_SECRET: process.env.RESEND_WEBHOOK_SECRET,
+    UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
+    INNGEST_EVENT_KEY: process.env.INNGEST_EVENT_KEY,
+    INNGEST_SIGNING_KEY: process.env.INNGEST_SIGNING_KEY,
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+    SITE_URL: process.env.SITE_URL,
+
+    // Client
+    NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN,
+    NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
+
   /**
-   * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
-   * useful for Docker builds.
+   * Skip validation during Docker builds
    */
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+
   /**
-   * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
-   * `SOME_VAR=''` will throw an error.
+   * Treat empty strings as undefined
    */
   emptyStringAsUndefined: true,
 });

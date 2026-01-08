@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+# lock files from other package managers (using pnpm)
+package-lock.json
+yarn.lock
+
 # testing
 /coverage
 
@@ -12,6 +16,8 @@
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 db.sqlite
+*.sqlite-journal
+*.sqlite-wal
 
 # next.js
 /.next/
