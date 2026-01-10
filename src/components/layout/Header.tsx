@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useCart, useLocale, supportedLanguages, supportedCountries } from "~/contexts";
+import { useCart, useLocale, supportedLanguages } from "~/contexts";
 
 /**
  * Header component
@@ -9,7 +9,7 @@ import { useCart, useLocale, supportedLanguages, supportedCountries } from "~/co
  */
 export function Header() {
   const { cart, toggleCart } = useCart();
-  const { locale, setLanguage, setCountry } = useLocale();
+  const { locale, setLanguage } = useLocale();
 
   return (
     <header className="bg-white border-b border-cream-200 sticky top-0 z-40">
@@ -55,19 +55,6 @@ export function Header() {
               {supportedLanguages.map((lang) => (
                 <option key={lang.code} value={lang.code}>
                   {lang.name}
-                </option>
-              ))}
-            </select>
-
-            {/* Country selector */}
-            <select
-              value={locale.country}
-              onChange={(e) => setCountry(e.target.value as typeof locale.country)}
-              className="hidden sm:block text-sm font-medium text-stone-600 border-none bg-transparent cursor-pointer focus:ring-0 focus:outline-none"
-            >
-              {supportedCountries.map((country) => (
-                <option key={country.code} value={country.code}>
-                  {country.name}
                 </option>
               ))}
             </select>

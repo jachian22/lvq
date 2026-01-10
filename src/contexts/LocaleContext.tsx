@@ -67,6 +67,24 @@ const COOKIE_CURRENCY = "lvq_currency";
 const COOKIE_EXPIRES = 365; // days
 
 /**
+ * Auto-detect currency from browser locale
+ * US visitors get USD, everyone else gets EUR (EU-focused business)
+ */
+function detectCurrencyFromBrowser(): CurrencyCode {
+  if (typeof window === "undefined") return "EUR";
+
+  const browserLocale = navigator.language; // e.g., "en-US", "nl-NL", "de-DE"
+
+  // US visitors get USD
+  if (browserLocale === "en-US" || browserLocale.endsWith("-US")) {
+    return "USD";
+  }
+
+  // Default to EUR for everyone else (EU-focused business)
+  return "EUR";
+}
+
+/**
  * Create the context
  */
 const LocaleContext = createContext<LocaleContextValue | null>(null);
@@ -81,7 +99,7 @@ export function LocaleProvider({
   children: ReactNode;
   initialLocale?: Partial<LocaleConfig>;
 }) {
-  // Initialize from cookies or props
+  // Initialize from cookies, browser detection, or props
   const [locale, setLocale] = useState<LocaleConfig>(() => {
     // Try to read from cookies (client-side only)
     if (typeof window !== "undefined") {
@@ -89,10 +107,13 @@ export function LocaleProvider({
       const savedLanguage = Cookies.get(COOKIE_LANGUAGE) as LanguageCode | undefined;
       const savedCurrency = Cookies.get(COOKIE_CURRENCY) as CurrencyCode | undefined;
 
+      // Auto-detect currency from browser if not saved
+      const detectedCurrency = savedCurrency ?? detectCurrencyFromBrowser();
+
       return {
         country: savedCountry ?? initialLocale?.country ?? defaultLocale.country,
         language: savedLanguage ?? initialLocale?.language ?? defaultLocale.language,
-        currency: savedCurrency ?? initialLocale?.currency ?? defaultLocale.currency,
+        currency: detectedCurrency,
       };
     }
 
