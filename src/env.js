@@ -6,9 +6,9 @@ export const env = createEnv({
    * Server-side environment variables schema
    */
   server: {
-    // Database (SQLite file or Turso URL)
-    DATABASE_URL: z.string().min(1),
-    DATABASE_AUTH_TOKEN: z.string().optional(),
+    // Database (Turso)
+    TURSO_DATABASE_URL: z.string().min(1),
+    TURSO_AUTH_TOKEN: z.string().optional(),
 
     // Node environment
     NODE_ENV: z
@@ -59,8 +59,8 @@ export const env = createEnv({
    */
   runtimeEnv: {
     // Server
-    DATABASE_URL: process.env.DATABASE_URL,
-    DATABASE_AUTH_TOKEN: process.env.DATABASE_AUTH_TOKEN,
+    TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
+    TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
     SHOPIFY_ADMIN_API_TOKEN: process.env.SHOPIFY_ADMIN_API_TOKEN,
     SHOPIFY_WEBHOOK_SECRET: process.env.SHOPIFY_WEBHOOK_SECRET,
