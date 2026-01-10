@@ -91,40 +91,48 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 /**
  * LocaleProvider component
+ *
+ * @param serverLocale - Locale from getServerSideProps (source of truth for language)
  */
 export function LocaleProvider({
   children,
-  initialLocale,
+  serverLocale,
 }: {
   children: ReactNode;
-  initialLocale?: Partial<LocaleConfig>;
+  serverLocale?: string;
 }) {
-  // Initialize with default values for consistent SSR hydration
+  // Convert server locale to language code (e.g., "en" -> "EN")
+  const serverLanguage = serverLocale?.toUpperCase() as LanguageCode | undefined;
+  const validServerLang =
+    serverLanguage && ["NL", "EN", "DE", "FR"].includes(serverLanguage)
+      ? serverLanguage
+      : undefined;
+
+  // Initialize with server locale if available (prevents hydration mismatch)
   const [locale, setLocale] = useState<LocaleConfig>({
-    country: initialLocale?.country ?? defaultLocale.country,
-    language: initialLocale?.language ?? defaultLocale.language,
-    currency: initialLocale?.currency ?? defaultLocale.currency,
+    country: defaultLocale.country,
+    language: validServerLang ?? defaultLocale.language,
+    currency: defaultLocale.currency,
   });
 
-  // After hydration, load from cookies or detect from browser
+  // After hydration, load currency preference from cookies/browser
+  // Note: We do NOT load language from cookies - URL (serverLocale) is source of truth
   const [isHydrated, setIsHydrated] = useState(false);
   useEffect(() => {
     if (isHydrated) return;
     setIsHydrated(true);
 
-    const savedCountry = Cookies.get(COOKIE_COUNTRY) as CountryCode | undefined;
-    const savedLanguage = Cookies.get(COOKIE_LANGUAGE) as LanguageCode | undefined;
     const savedCurrency = Cookies.get(COOKIE_CURRENCY) as CurrencyCode | undefined;
 
     // Auto-detect currency from browser if not saved
     const detectedCurrency = savedCurrency ?? detectCurrencyFromBrowser();
 
-    setLocale({
-      country: savedCountry ?? initialLocale?.country ?? defaultLocale.country,
-      language: savedLanguage ?? initialLocale?.language ?? defaultLocale.language,
+    setLocale((prev) => ({
+      ...prev,
       currency: detectedCurrency,
-    });
-  }, [isHydrated, initialLocale]);
+      // Don't override language - URL/server is source of truth
+    }));
+  }, [isHydrated]);
 
   // Persist to cookies when locale changes
   useEffect(() => {

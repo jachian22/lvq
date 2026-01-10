@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useMemo } from "react";
 import { T } from "gt-react";
 import { useCart, useLocale, supportedLanguages } from "~/contexts";
 import type { LanguageCode } from "~/server/shopify";
@@ -14,6 +15,18 @@ export function Header() {
   const router = useRouter();
   const { cart, toggleCart } = useCart();
   const { locale, setLanguage } = useLocale();
+
+  // Get display locale from URL directly (more reliable than context on first render)
+  // This prevents the dropdown from showing wrong language on initial load
+  const displayLocale = useMemo(() => {
+    if (typeof window !== "undefined") {
+      const pathLocale = window.location.pathname.split("/")[1]?.toUpperCase();
+      if (["NL", "EN", "DE", "FR"].includes(pathLocale ?? "")) {
+        return pathLocale as LanguageCode;
+      }
+    }
+    return locale.language;
+  }, [locale.language]);
 
   // Handle language change - update context and navigate
   const handleLanguageChange = (newLanguage: LanguageCode) => {
@@ -73,7 +86,7 @@ export function Header() {
           <div className="flex items-center gap-4">
             {/* Language selector */}
             <select
-              value={locale.language}
+              value={displayLocale}
               onChange={(e) => handleLanguageChange(e.target.value as LanguageCode)}
               className="text-sm font-medium text-stone-600 border-none bg-transparent cursor-pointer focus:ring-0 focus:outline-none"
             >

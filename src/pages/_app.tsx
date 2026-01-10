@@ -1,6 +1,6 @@
 import { type AppType } from "next/app";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import { GTProvider } from "gt-react";
 
@@ -14,6 +14,9 @@ import { CartDrawer } from "~/components/cart/CartDrawer";
 import { ChatWidget } from "~/components/chat/ChatWidget";
 
 import "~/styles/globals.css";
+
+// Supported locales for validation
+const SUPPORTED_LOCALES = ["nl", "en", "de", "fr"];
 
 // Map our language codes to GT locale format
 const languageToLocale: Record<string, string> = {
@@ -54,22 +57,51 @@ function LocaleSync({ children }: { children: React.ReactNode }) {
 
 /**
  * Wrapper to connect GTProvider with our LocaleContext
- * Reads locale from URL path directly to avoid race conditions
+ *
+ * Priority chain for locale:
+ * 1. serverLocale (from getServerSideProps) — SSR truth
+ * 2. LocaleContext (after LocaleSync updates it)
+ * 3. window.location.pathname — client fallback
+ * 4. Default "nl"
  */
-function TranslationProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
+function TranslationProvider({
+  children,
+  serverLocale,
+}: {
+  children: React.ReactNode;
+  serverLocale?: string;
+}) {
+  const { locale } = useLocale();
 
-  // Extract locale from URL path directly (more reliable than context on first render)
-  const pathSegment = router.asPath.split("/")[1]?.split("?")[0];
-  const gtLocale = ["nl", "en", "de", "fr"].includes(pathSegment ?? "")
-    ? pathSegment
-    : "nl";
+  const gtLocale = useMemo(() => {
+    // 1. Server locale (during SSR and initial hydration)
+    if (serverLocale && SUPPORTED_LOCALES.includes(serverLocale)) {
+      return serverLocale;
+    }
+
+    // 2. Context (after LocaleSync updates it)
+    const contextLocale = languageToLocale[locale.language];
+    if (contextLocale) {
+      return contextLocale;
+    }
+
+    // 3. Window location (client fallback)
+    if (typeof window !== "undefined") {
+      const pathLocale = window.location.pathname.split("/")[1];
+      if (SUPPORTED_LOCALES.includes(pathLocale ?? "")) {
+        return pathLocale;
+      }
+    }
+
+    // 4. Default
+    return "nl";
+  }, [serverLocale, locale.language]);
 
   return (
     <GTProvider
       projectId={process.env.NEXT_PUBLIC_GT_PROJECT_ID ?? ""}
       devApiKey={process.env.NEXT_PUBLIC_GT_DEV_API_KEY}
-      locale={gtLocale!}
+      locale={gtLocale}
       defaultLocale="nl"
       locales={["nl", "en", "de", "fr"]}
     >
@@ -94,11 +126,14 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp: AppType<{ locale?: string }> = ({ Component, pageProps }) => {
+  // Get locale from server (passed via getServerSideProps)
+  const serverLocale = (pageProps as { locale?: string }).locale;
+
   return (
-    <LocaleProvider>
+    <LocaleProvider serverLocale={serverLocale}>
       <LocaleSync>
-        <TranslationProvider>
+        <TranslationProvider serverLocale={serverLocale}>
           <PromoProvider>
             <CartProvider>
               <WizardProvider>
