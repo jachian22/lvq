@@ -43,20 +43,31 @@ export function ChatWidget() {
   useEffect(() => {
     if (isOpen && !conversationId) {
       const initConversation = async () => {
-        const visitorId = getVisitorId();
-        const result = await getOrCreateConversation.mutateAsync({ visitorId });
-        if (result.id) {
-          setConversationId(result.id);
-        }
-        if (result.messages) {
-          setMessages(
-            result.messages.map((m) => ({
-              id: m.id,
-              role: m.role as "user" | "assistant" | "staff",
-              content: m.content,
-              createdAt: new Date(m.createdAt ?? Date.now()),
-            }))
-          );
+        try {
+          const visitorId = getVisitorId();
+          const result = await getOrCreateConversation.mutateAsync({ visitorId });
+          if (result.id) {
+            setConversationId(result.id);
+          }
+          if (result.messages) {
+            setMessages(
+              result.messages.map((m) => ({
+                id: m.id,
+                role: m.role as "user" | "assistant" | "staff",
+                content: m.content,
+                createdAt: new Date(m.createdAt ?? Date.now()),
+              }))
+            );
+          }
+        } catch (error) {
+          console.error("Failed to initialize chat:", error);
+          // Show a friendly message to the user
+          setMessages([{
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: "Sorry, we're having trouble connecting. Please refresh the page or try again later.",
+            createdAt: new Date(),
+          }]);
         }
       };
       initConversation();
@@ -163,7 +174,7 @@ export function ChatWidget() {
       {/* Chat button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50 flex items-center justify-center"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-delft-600 text-white rounded-full shadow-lg hover:bg-delft-700 transition-all duration-200 z-50 flex items-center justify-center hover:scale-105"
         aria-label="Open chat"
       >
         {isOpen ? (
@@ -179,19 +190,20 @@ export function ChatWidget() {
 
       {/* Chat window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 max-h-[500px] bg-white rounded-lg shadow-2xl z-50 flex flex-col overflow-hidden">
+        <div className="fixed bottom-24 right-6 w-96 max-h-[500px] bg-cream-50 rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden border border-cream-200">
           {/* Header */}
-          <div className="bg-blue-600 text-white p-4">
-            <h3 className="font-semibold">Chat with us</h3>
-            <p className="text-sm text-blue-100">We typically reply within minutes</p>
+          <div className="bg-delft-600 text-white p-5">
+            <h3 className="font-display font-semibold text-lg">Chat with us</h3>
+            <p className="text-sm text-delft-100">We typically reply within minutes</p>
           </div>
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[200px] max-h-[300px]">
             {messages.length === 0 && (
-              <div className="text-center text-gray-500 py-8">
-                <p>👋 Hi there!</p>
-                <p className="text-sm mt-2">How can we help you today?</p>
+              <div className="text-center text-stone-500 py-8">
+                <p className="text-2xl">👋</p>
+                <p className="font-display font-semibold text-charcoal mt-2">Hi there!</p>
+                <p className="text-sm mt-1">How can we help you today?</p>
               </div>
             )}
             {messages.map((msg) => (
@@ -200,16 +212,16 @@ export function ChatWidget() {
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                  className={`max-w-[80%] rounded-lg px-4 py-2.5 ${
                     msg.role === "user"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-delft-600 text-white"
                       : msg.role === "staff"
-                      ? "bg-green-100 text-green-900"
-                      : "bg-gray-100 text-gray-900"
+                      ? "bg-success-100 text-success-900 border border-success-200"
+                      : "bg-white text-charcoal border border-cream-200"
                   }`}
                 >
                   {msg.role === "staff" && (
-                    <p className="text-xs font-medium text-green-700 mb-1">Support Team</p>
+                    <p className="text-xs font-medium text-success-700 mb-1">Support Team</p>
                   )}
                   <p className="whitespace-pre-wrap text-sm">{msg.content}</p>
                 </div>
@@ -217,11 +229,11 @@ export function ChatWidget() {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 rounded-lg px-4 py-2">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                <div className="bg-white rounded-lg px-4 py-3 border border-cream-200">
+                  <div className="flex gap-1.5">
+                    <span className="w-2 h-2 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-2 h-2 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-2 h-2 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                   </div>
                 </div>
               </div>
@@ -230,7 +242,7 @@ export function ChatWidget() {
           </div>
 
           {/* Input */}
-          <div className="border-t p-4">
+          <div className="border-t border-cream-200 p-4 bg-white">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -238,12 +250,12 @@ export function ChatWidget() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type a message..."
-                className="flex-1 border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 border border-stone-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-delft-500 focus:border-transparent"
               />
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-delft-600 text-white px-4 py-2.5 rounded-lg hover:bg-delft-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />

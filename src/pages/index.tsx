@@ -26,8 +26,8 @@ export default function Home() {
         <meta name="description" content="Transform your pet into royalty with custom hand-painted portraits" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen items-center justify-center">
-        <div className="animate-pulse text-gray-500">Loading...</div>
+      <main className="flex min-h-screen items-center justify-center bg-cream-50">
+        <div className="animate-pulse text-stone-500 font-display">Loading...</div>
       </main>
     </>
   );

@@ -377,30 +377,44 @@ export const supportRouter = createTRPCRouter({
    * Get ticket stats for dashboard
    */
   getStats: publicProcedure.query(async ({ ctx }) => {
-    const [pending] = await ctx.db
-      .select({ count: sql<number>`count(*)` })
+    // Single query with GROUP BY instead of 4 separate COUNT queries
+    const statusCounts = await ctx.db
+      .select({
+        status: supportTickets.status,
+        count: sql<number>`count(*)`,
+      })
       .from(supportTickets)
-      .where(eq(supportTickets.status, "pending"));
+      .groupBy(supportTickets.status);
 
-    const [inProgress] = await ctx.db
-      .select({ count: sql<number>`count(*)` })
-      .from(supportTickets)
-      .where(eq(supportTickets.status, "in_progress"));
-
-    const [resolved] = await ctx.db
-      .select({ count: sql<number>`count(*)` })
-      .from(supportTickets)
-      .where(eq(supportTickets.status, "resolved"));
-
-    const [total] = await ctx.db
-      .select({ count: sql<number>`count(*)` })
-      .from(supportTickets);
-
-    return {
-      pending: pending?.count ?? 0,
-      inProgress: inProgress?.count ?? 0,
-      resolved: resolved?.count ?? 0,
-      total: total?.count ?? 0,
+    // Build stats object from grouped results
+    const stats = {
+      pending: 0,
+      inProgress: 0,
+      resolved: 0,
+      closed: 0,
+      total: 0,
     };
+
+    for (const row of statusCounts) {
+      const count = row.count ?? 0;
+      stats.total += count;
+
+      switch (row.status) {
+        case "pending":
+          stats.pending = count;
+          break;
+        case "in_progress":
+          stats.inProgress = count;
+          break;
+        case "resolved":
+          stats.resolved = count;
+          break;
+        case "closed":
+          stats.closed = count;
+          break;
+      }
+    }
+
+    return stats;
   }),
 });

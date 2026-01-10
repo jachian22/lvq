@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { localeSchema, DEFAULT_LOCALE } from "~/server/api/schemas";
 import {
   storefrontQuery,
   GET_PRODUCTS,
@@ -13,14 +14,6 @@ import {
   type CollectionResponse,
   type LocaleContext,
 } from "~/server/shopify";
-
-/**
- * Locale schema for API inputs
- */
-const localeSchema = z.object({
-  country: z.enum(["NL", "DE", "FR", "BE", "GB", "US", "AT", "IT", "ES", "PT", "IE", "LU"]).default("NL"),
-  language: z.enum(["NL", "EN", "DE", "FR"]).default("NL"),
-});
 
 /**
  * Storefront router - Products and Collections from Shopify
@@ -38,7 +31,7 @@ export const storefrontRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontQuery<ProductsResponse>(
         GET_PRODUCTS,
@@ -63,7 +56,7 @@ export const storefrontRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontQuery<ProductResponse>(
         GET_PRODUCT_BY_HANDLE,
@@ -95,7 +88,7 @@ export const storefrontRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontQuery<CollectionsResponse>(
         GET_COLLECTIONS,
@@ -122,7 +115,7 @@ export const storefrontRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontQuery<CollectionResponse>(
         GET_COLLECTION_BY_HANDLE,
@@ -152,7 +145,7 @@ export const storefrontRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontQuery<ProductResponse>(
         GET_PRODUCT_BY_HANDLE,
@@ -184,7 +177,7 @@ export const storefrontRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontQuery<CollectionResponse>(
         GET_COLLECTION_BY_HANDLE,
@@ -212,7 +205,7 @@ export const storefrontRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontQuery<{ search: { edges: Array<{ node: unknown }>; pageInfo: unknown } }>(
         SEARCH_PRODUCTS,

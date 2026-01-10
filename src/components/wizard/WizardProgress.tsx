@@ -11,18 +11,19 @@ const steps: { id: WizardStep; label: string }[] = [
  * WizardProgress component
  *
  * Shows progress through the 4-step customization flow.
+ * Design: Ochre active state, burgundy completed, larger regal circles.
  */
 export function WizardProgress() {
-  const { state, goToStep, canGoNext } = useWizard();
+  const { state, goToStep } = useWizard();
   const currentIndex = getStepNumber(state.currentStep) - 1;
 
   return (
-    <div className="w-full py-4">
+    <div className="w-full py-6">
       <div className="flex items-center justify-between">
         {steps.map((step, index) => {
           const isActive = index === currentIndex;
           const isCompleted = index < currentIndex;
-          const isClickable = index < currentIndex; // Can only go back to completed steps
+          const isClickable = index < currentIndex;
 
           return (
             <div key={step.id} className="flex items-center flex-1">
@@ -31,10 +32,10 @@ export function WizardProgress() {
                 onClick={() => isClickable && goToStep(step.id)}
                 disabled={!isClickable}
                 className={`
-                  flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-colors
-                  ${isActive ? "bg-red-600 text-white" : ""}
-                  ${isCompleted ? "bg-green-600 text-white cursor-pointer hover:bg-green-700" : ""}
-                  ${!isActive && !isCompleted ? "bg-gray-200 text-gray-500" : ""}
+                  flex items-center justify-center w-12 h-12 rounded-full text-sm font-semibold transition-all duration-300 ease-regal
+                  ${isActive ? "bg-ochre-500 text-charcoal ring-4 ring-ochre-200 shadow-gold" : ""}
+                  ${isCompleted ? "bg-burgundy-800 text-cream-100 cursor-pointer hover:bg-burgundy-700" : ""}
+                  ${!isActive && !isCompleted ? "bg-stone-200 text-stone-400" : ""}
                   ${isClickable ? "" : "cursor-default"}
                 `}
               >
@@ -47,11 +48,13 @@ export function WizardProgress() {
                 )}
               </button>
 
-              {/* Step label (below on mobile, inline on desktop) */}
+              {/* Step label */}
               <span
                 className={`
-                  hidden sm:block ml-2 text-sm font-medium
-                  ${isActive ? "text-gray-900" : "text-gray-500"}
+                  hidden sm:block ml-3 font-display text-sm font-medium transition-colors duration-200
+                  ${isActive ? "text-charcoal" : ""}
+                  ${isCompleted ? "text-burgundy-800" : ""}
+                  ${!isActive && !isCompleted ? "text-stone-400" : ""}
                 `}
               >
                 {step.label}
@@ -59,10 +62,10 @@ export function WizardProgress() {
 
               {/* Connector line */}
               {index < steps.length - 1 && (
-                <div className="flex-1 mx-2 sm:mx-4">
+                <div className="flex-1 mx-3 sm:mx-4">
                   <div
-                    className={`h-1 rounded ${
-                      index < currentIndex ? "bg-green-600" : "bg-gray-200"
+                    className={`h-1 rounded-full transition-colors duration-500 ${
+                      index < currentIndex ? "bg-burgundy-800" : "bg-stone-200"
                     }`}
                   />
                 </div>
@@ -73,8 +76,8 @@ export function WizardProgress() {
       </div>
 
       {/* Mobile step label */}
-      <p className="sm:hidden text-center mt-3 text-sm text-gray-600">
-        Step {currentIndex + 1} of {getTotalSteps()}: {steps[currentIndex]?.label}
+      <p className="sm:hidden text-center mt-4 text-sm text-stone-600">
+        <span className="font-display font-semibold text-charcoal">Step {currentIndex + 1}</span> of {getTotalSteps()}: {steps[currentIndex]?.label}
       </p>
     </div>
   );

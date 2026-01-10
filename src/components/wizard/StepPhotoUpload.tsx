@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useWizard } from "~/contexts/WizardContext";
 
 /**
@@ -12,6 +12,27 @@ export function StepPhotoUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Track blob URL for cleanup to prevent memory leaks
+  const blobUrlRef = useRef<string | null>(null);
+
+  // Cleanup blob URL on unmount
+  useEffect(() => {
+    return () => {
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+      }
+    };
+  }, []);
+
+  // Wrapper to clear image and revoke blob URL
+  const handleClearImage = useCallback(() => {
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current);
+      blobUrlRef.current = null;
+    }
+    clearUploadedImage();
+  }, [clearUploadedImage]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -57,9 +78,15 @@ export function StepPhotoUpload() {
     setIsUploading(true);
 
     try {
+      // Revoke previous blob URL if exists
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+      }
+
       // For now, create a local preview URL
       // In production, this would use UploadThing
       const previewUrl = URL.createObjectURL(file);
+      blobUrlRef.current = previewUrl;
       setUploadedImage(previewUrl, file.name);
 
       // TODO: Replace with actual UploadThing upload
@@ -74,37 +101,37 @@ export function StepPhotoUpload() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">Upload Your Photo</h2>
-        <p className="mt-2 text-gray-600">
+        <h2 className="font-display text-3xl font-bold text-charcoal">Upload Your Photo</h2>
+        <p className="mt-3 text-stone-600">
           Upload a clear photo of your pet. We'll transform it into a stunning portrait.
         </p>
       </div>
 
       {/* Photo tips */}
-      <div className="bg-blue-50 rounded-lg p-4">
-        <h3 className="font-semibold text-blue-900 flex items-center">
+      <div className="bg-delft-50 rounded-lg p-5 border border-delft-200">
+        <h3 className="font-semibold text-delft-800 flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
           </svg>
           Photo Tips
         </h3>
-        <ul className="mt-2 text-sm text-blue-800 space-y-1">
+        <ul className="mt-3 text-sm text-delft-700 space-y-1.5">
           <li className="flex items-start">
-            <span className="text-green-600 mr-2">✓</span>
+            <span className="text-success-600 mr-2">✓</span>
             Use a clear, high-resolution photo
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2">✓</span>
+            <span className="text-success-600 mr-2">✓</span>
             Make sure your pet's face is clearly visible
           </li>
           <li className="flex items-start">
-            <span className="text-green-600 mr-2">✓</span>
+            <span className="text-success-600 mr-2">✓</span>
             Good lighting works best
           </li>
           <li className="flex items-start">
-            <span className="text-red-600 mr-2">✗</span>
+            <span className="text-error-600 mr-2">✗</span>
             Avoid blurry or dark photos
           </li>
         </ul>
@@ -118,19 +145,19 @@ export function StepPhotoUpload() {
             <img
               src={state.uploadedImageUrl}
               alt="Uploaded pet photo"
-              className="w-full rounded-lg shadow-lg"
+              className="w-full rounded-lg shadow-gold ring-4 ring-ochre-200"
             />
             <button
-              onClick={clearUploadedImage}
-              className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+              onClick={handleClearImage}
+              className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg hover:bg-cream-50 transition-colors duration-200"
               aria-label="Remove photo"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-stone-600" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </button>
           </div>
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-stone-500">
             {state.uploadedImageName}
           </p>
         </div>
@@ -140,8 +167,8 @@ export function StepPhotoUpload() {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={`
-            border-2 border-dashed rounded-lg p-12 text-center transition-colors cursor-pointer
-            ${isDragging ? "border-red-600 bg-red-50" : "border-gray-300 hover:border-gray-400"}
+            border-2 border-dashed rounded-lg p-12 text-center transition-all duration-300 ease-regal cursor-pointer
+            ${isDragging ? "border-ochre-500 bg-ochre-50 shadow-gold" : "border-stone-300 hover:border-ochre-400 hover:bg-cream-50"}
             ${isUploading ? "opacity-50 pointer-events-none" : ""}
           `}
         >
@@ -154,16 +181,16 @@ export function StepPhotoUpload() {
             disabled={isUploading}
           />
           <label htmlFor="photo-upload" className="cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-14 w-14 mx-auto text-ochre-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p className="mt-4 text-lg font-medium text-gray-900">
+            <p className="mt-4 font-display text-xl font-semibold text-charcoal">
               {isUploading ? "Uploading..." : "Drag and drop your photo here"}
             </p>
-            <p className="mt-2 text-gray-500">
-              or <span className="text-red-600 underline">browse files</span>
+            <p className="mt-2 text-stone-500">
+              or <span className="text-ochre-600 font-medium hover:text-ochre-700 underline underline-offset-2">browse files</span>
             </p>
-            <p className="mt-2 text-sm text-gray-400">
+            <p className="mt-3 text-sm text-stone-400">
               JPG, PNG up to 10MB
             </p>
           </label>
@@ -172,7 +199,7 @@ export function StepPhotoUpload() {
 
       {/* Error message */}
       {error && (
-        <div className="bg-red-50 text-red-700 rounded-lg p-4 text-center">
+        <div className="bg-error-50 text-error-700 rounded-lg p-4 text-center border border-error-200">
           {error}
         </div>
       )}
@@ -182,14 +209,14 @@ export function StepPhotoUpload() {
         <button
           onClick={previousStep}
           disabled={!canGoPrevious()}
-          className="px-6 py-3 text-gray-600 font-medium hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-3 text-stone-600 font-medium hover:text-charcoal disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           Back
         </button>
         <button
           onClick={nextStep}
           disabled={!canGoNext()}
-          className="px-8 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="btn-primary px-8 py-3"
         >
           Continue
         </button>

@@ -18,18 +18,18 @@ export function CartDrawer() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 z-40"
+        className="fixed inset-0 bg-charcoal/60 z-40 transition-opacity duration-300"
         onClick={closeCart}
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl z-50 flex flex-col">
+      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-cream-50 shadow-2xl z-50 flex flex-col animate-slideInRight">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Your Cart</h2>
+        <div className="flex items-center justify-between p-5 border-b border-cream-200 bg-white">
+          <h2 className="font-display text-xl font-semibold text-charcoal">Your Cart</h2>
           <button
             onClick={closeCart}
-            className="p-2 text-gray-400 hover:text-gray-600"
+            className="p-2 text-stone-400 hover:text-charcoal transition-colors"
             aria-label="Close cart"
           >
             <svg
@@ -50,12 +50,12 @@ export function CartDrawer() {
         </div>
 
         {/* Cart contents */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-5">
           {cart.lines.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-16">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-16 w-16 mx-auto text-gray-300 mb-4"
+                className="h-16 w-16 mx-auto text-stone-300 mb-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -67,14 +67,15 @@ export function CartDrawer() {
                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                 />
               </svg>
-              <p className="text-gray-500">Your cart is empty</p>
+              <p className="font-display text-lg text-stone-500">Your cart is empty</p>
+              <p className="text-sm text-stone-400 mt-2">Add a custom portrait to get started</p>
             </div>
           ) : (
             <ul className="space-y-4">
               {cart.lines.map((item) => (
-                <li key={item.id} className="flex gap-4">
+                <li key={item.id} className="flex gap-4 p-4 bg-white rounded-lg border border-cream-200">
                   {/* Product image */}
-                  <div className="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                  <div className="w-20 h-20 bg-cream-100 rounded-lg overflow-hidden flex-shrink-0">
                     {item.merchandise.product.featuredImage ? (
                       <img
                         src={item.merchandise.product.featuredImage.url}
@@ -82,7 +83,7 @@ export function CartDrawer() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <div className="w-full h-full flex items-center justify-center text-stone-400">
                         No image
                       </div>
                     )}
@@ -90,37 +91,37 @@ export function CartDrawer() {
 
                   {/* Product details */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-sm truncate">
+                    <h3 className="font-display font-semibold text-charcoal truncate">
                       {item.merchandise.product.title}
                     </h3>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-stone-500 text-sm">
                       {item.merchandise.title}
                     </p>
-                    <p className="text-sm font-medium mt-1">
+                    <p className="font-display text-ochre-700 font-semibold mt-1">
                       {formatPrice(parseFloat(item.merchandise.price.amount))}
                     </p>
 
                     {/* Quantity controls */}
-                    <div className="flex items-center gap-2 mt-2">
+                    <div className="flex items-center gap-2 mt-3">
                       <button
                         onClick={() => updateItem(item.id, item.quantity - 1)}
                         disabled={isLoading}
-                        className="w-6 h-6 rounded border text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                        className="w-7 h-7 rounded border border-stone-300 text-stone-600 hover:bg-cream-100 hover:border-ochre-400 disabled:opacity-50 transition-colors"
                       >
                         -
                       </button>
-                      <span className="w-8 text-center text-sm">{item.quantity}</span>
+                      <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
                       <button
                         onClick={() => updateItem(item.id, item.quantity + 1)}
                         disabled={isLoading}
-                        className="w-6 h-6 rounded border text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                        className="w-7 h-7 rounded border border-stone-300 text-stone-600 hover:bg-cream-100 hover:border-ochre-400 disabled:opacity-50 transition-colors"
                       >
                         +
                       </button>
                       <button
                         onClick={() => removeItem(item.id)}
                         disabled={isLoading}
-                        className="ml-auto text-red-500 hover:text-red-700 text-sm disabled:opacity-50"
+                        className="ml-auto text-burgundy-700 hover:text-burgundy-900 text-sm font-medium disabled:opacity-50 transition-colors"
                       >
                         Remove
                       </button>
@@ -134,27 +135,27 @@ export function CartDrawer() {
 
         {/* Footer with totals and checkout */}
         {cart.lines.length > 0 && (
-          <div className="border-t p-4 space-y-4">
+          <div className="border-t border-cream-200 p-5 space-y-4 bg-white">
             {/* Discount codes */}
             {cart.discountCodes.length > 0 && (
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-green-600">✓</span>
-                <span>
+              <div className="flex items-center gap-2 text-sm bg-success-50 p-3 rounded-lg">
+                <span className="text-success-600">✓</span>
+                <span className="text-success-700 font-medium">
                   {cart.discountCodes.map((dc) => dc.code).join(", ")} applied
                 </span>
               </div>
             )}
 
             {/* Subtotal */}
-            <div className="flex justify-between text-sm">
-              <span>Subtotal</span>
-              <span>
+            <div className="flex justify-between items-center">
+              <span className="text-stone-600">Subtotal</span>
+              <span className="font-display text-xl font-bold text-charcoal">
                 {cart.subtotal && formatPrice(parseFloat(cart.subtotal.amount))}
               </span>
             </div>
 
             {/* Shipping note */}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-stone-500">
               Shipping calculated at checkout
             </p>
 
@@ -162,7 +163,7 @@ export function CartDrawer() {
             <button
               onClick={goToCheckout}
               disabled={isLoading || !cart.checkoutUrl}
-              className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50"
+              className="btn-primary w-full py-3.5"
             >
               {isLoading ? "Loading..." : "Checkout"}
             </button>

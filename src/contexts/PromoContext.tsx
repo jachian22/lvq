@@ -64,11 +64,8 @@ export function PromoProvider({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // tRPC query for validating promo codes
-  const validatePromoMutation = api.discounts.getByCode.useQuery(
-    { code: activePromo?.code ?? "" },
-    { enabled: false }
-  );
+  // tRPC utils for imperative query calls
+  const apiUtils = api.useUtils();
 
   // Initialize from URL param or cookie on mount
   useEffect(() => {
@@ -109,9 +106,8 @@ export function PromoProvider({
     setError(null);
 
     try {
-      // Validate with API
-      const result = await validatePromoMutation.refetch();
-      const promo = result.data;
+      // Validate with API using the provided code parameter
+      const promo = await apiUtils.discounts.getByCode.fetch({ code });
 
       if (!promo) {
         setError("Invalid or expired promo code");
@@ -192,23 +188,27 @@ export function PromoProvider({
         return noDiscount;
       }
 
-      // Calculate discount
+      // Calculate discount - round all monetary values to 2 decimal places (cents)
+      const roundToCents = (value: number) => Math.round(value * 100) / 100;
+
       let discounted: number;
       let percentage: number;
 
       if (activePromo.type === "percentage") {
         percentage = activePromo.value;
-        discounted = Math.round(price * (1 - activePromo.value / 100) * 100) / 100;
+        discounted = roundToCents(price * (1 - activePromo.value / 100));
       } else {
         // Fixed amount discount
-        discounted = Math.max(0, price - activePromo.value);
-        percentage = Math.round(((price - discounted) / price) * 100);
+        discounted = roundToCents(Math.max(0, price - activePromo.value));
+        percentage = price > 0 ? Math.round(((price - discounted) / price) * 100) : 0;
       }
+
+      const savings = roundToCents(price - discounted);
 
       return {
         original: price,
         discounted,
-        savings: price - discounted,
+        savings,
         percentage,
         qualifies: true,
       };

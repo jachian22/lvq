@@ -4,7 +4,7 @@ import { usePromo } from "~/contexts";
  * PromoBanner component
  *
  * Displays a persistent banner at the top of the page when a promo code is active.
- * Shows different messages based on discount scope (all, collection, product).
+ * Design: Burgundy background with cream text, subtle elegance.
  */
 export function PromoBanner() {
   const { activePromo, clearPromo } = usePromo();
@@ -52,27 +52,29 @@ export function PromoBanner() {
   const expiryText = getExpiryText();
 
   return (
-    <div className="bg-gradient-to-r from-red-600 to-pink-600 text-white py-2 px-4">
-      <div className="container mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-2 flex-1 justify-center">
-          <span className="text-lg">🎉</span>
-          <span>
-            <strong>{activePromo.code}</strong> applied — {getMessage()}
+    <div className="bg-burgundy-800 text-cream-100 py-2.5 px-4">
+      <div className="container mx-auto max-w-7xl flex items-center justify-between">
+        <div className="flex items-center gap-3 flex-1 justify-center text-sm">
+          <span className="font-mono text-xs bg-burgundy-900 px-2 py-0.5 rounded tracking-wide">
+            {activePromo.code}
+          </span>
+          <span className="font-medium">
+            {getMessage()}
           </span>
           {expiryText && (
-            <span className="hidden sm:inline text-white/80 text-sm ml-2">
-              ({expiryText})
+            <span className="hidden sm:inline text-burgundy-200 text-xs">
+              {expiryText}
             </span>
           )}
         </div>
         <button
           onClick={clearPromo}
-          className="text-white/70 hover:text-white p-1 transition-colors"
+          className="text-burgundy-300 hover:text-cream-100 p-1 transition-colors ml-4"
           aria-label="Remove discount code"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-4 w-4"
             viewBox="0 0 20 20"
             fill="currentColor"
           >

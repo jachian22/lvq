@@ -62,58 +62,8 @@ export function middleware(request: NextRequest) {
   }
 
   // ==========================================================================
-  // 2. LOCALE DETECTION (Optional - for future locale routing)
+  // 2. LOCALE DETECTION (disabled - links include locale prefix)
   // ==========================================================================
-  // Currently disabled since we're using a single-locale setup
-  // Uncomment when implementing multi-locale routing
-
-  /*
-  // Check if path already has locale prefix
-  const pathLocale = SUPPORTED_LOCALES.find(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
-
-  if (pathLocale) {
-    // Path already has locale, just set cookie
-    response.cookies.set(COOKIE_LOCALE, pathLocale, {
-      maxAge: COOKIE_MAX_AGE,
-      path: "/",
-      sameSite: "lax",
-    });
-    return response;
-  }
-
-  // Detect preferred locale
-  let detectedLocale = DEFAULT_LOCALE;
-
-  // 1. Check cookie
-  const cookieLocale = request.cookies.get(COOKIE_LOCALE)?.value;
-  if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
-    detectedLocale = cookieLocale;
-  } else {
-    // 2. Check Accept-Language header
-    const acceptLanguage = request.headers.get("accept-language");
-    if (acceptLanguage) {
-      const browserLocale = acceptLanguage.split(",")[0]?.split("-")[0];
-      if (browserLocale && SUPPORTED_LOCALES.includes(browserLocale)) {
-        detectedLocale = browserLocale;
-      }
-    }
-  }
-
-  // Redirect to locale-prefixed path
-  const redirectUrl = new URL(`/${detectedLocale}${pathname}`, request.url);
-  redirectUrl.search = request.nextUrl.search;
-
-  const redirectResponse = NextResponse.redirect(redirectUrl);
-  redirectResponse.cookies.set(COOKIE_LOCALE, detectedLocale, {
-    maxAge: COOKIE_MAX_AGE,
-    path: "/",
-    sameSite: "lax",
-  });
-
-  return redirectResponse;
-  */
 
   return response;
 }

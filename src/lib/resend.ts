@@ -1,7 +1,17 @@
 import { Resend } from "resend";
 
-// Initialize Resend client
-export const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-initialize Resend client to prevent crashes when API key is missing
+let _resend: Resend | null = null;
+
+export function getResend(): Resend {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY environment variable is not set");
+    }
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 // Default from address
 export const FROM_EMAIL = "La Vistique <support@lavistique.nl>";
@@ -13,7 +23,7 @@ export async function sendSupportReplyEmail(
   replyContent: string,
   conversationId: string
 ) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: `Re: ${subject}`,
@@ -56,7 +66,7 @@ export async function sendPreviewReadyEmail(
   previewUrl: string,
   orderId: string
 ) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: "Your Pet Portrait Preview is Ready!",
@@ -111,7 +121,7 @@ export async function sendWelcomeEmail(
   to: string,
   discountCode?: string
 ) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: "Welcome to La Vistique! 🐾",

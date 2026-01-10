@@ -24,12 +24,13 @@ export const IMAGE_FRAGMENT = `
   }
 `;
 
+// Note: This fragment uses MoneyFragment and ImageFragment, which must be included by the parent query
+// quantityAvailable removed - requires unauthenticated_read_product_inventory scope
 export const PRODUCT_VARIANT_FRAGMENT = `
   fragment ProductVariantFragment on ProductVariant {
     id
     title
     availableForSale
-    quantityAvailable
     price {
       ...MoneyFragment
     }
@@ -45,8 +46,6 @@ export const PRODUCT_VARIANT_FRAGMENT = `
     }
     sku
   }
-  ${MONEY_FRAGMENT}
-  ${IMAGE_FRAGMENT}
 `;
 
 // =============================================================================

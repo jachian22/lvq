@@ -1,6 +1,388 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* ========================================
+   * FONTS
+   * Display: Playfair Display - Elegant serif with Dutch Golden Age gravitas
+   * Body: DM Sans - Clean, geometric, Dutch design sensibility
+   * ======================================== */
+
+  --font-display: var(--font-playfair-display), "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* ========================================
+   * COLORS - OCHRE GOLD (Primary)
+   * Inspired by: Vermeer's warm interior light, gilded frames
+   * Use: Primary CTAs, highlights, "royal" accents
+   * ======================================== */
+
+  --color-ochre-50: #fefbf3;
+  --color-ochre-100: #fdf4de;
+  --color-ochre-200: #fae7bc;
+  --color-ochre-300: #f6d58f;
+  --color-ochre-400: #f1c160;
+  --color-ochre-500: #e9a836;
+  --color-ochre-600: #d18b1e;
+  --color-ochre-700: #ae6918;
+  --color-ochre-800: #8d531b;
+  --color-ochre-900: #744519;
+  --color-ochre-950: #42230a;
+
+  /* ========================================
+   * COLORS - BURGUNDY (Secondary)
+   * Inspired by: Rich velvet drapes in Rembrandt portraits
+   * Use: Secondary actions, hover states, depth
+   * ======================================== */
+
+  --color-burgundy-50: #fdf3f3;
+  --color-burgundy-100: #fce4e4;
+  --color-burgundy-200: #facece;
+  --color-burgundy-300: #f5abab;
+  --color-burgundy-400: #ec7a7a;
+  --color-burgundy-500: #df5151;
+  --color-burgundy-600: #c93434;
+  --color-burgundy-700: #a82828;
+  --color-burgundy-800: #8b2424;
+  --color-burgundy-900: #722323;
+  --color-burgundy-950: #3e0e0e;
+
+  /* ========================================
+   * COLORS - DELFT BLUE (Accent)
+   * Inspired by: Dutch Delftware ceramics
+   * Use: Chat widget, links, informational elements
+   * ======================================== */
+
+  --color-delft-50: #f0f7ff;
+  --color-delft-100: #e0effe;
+  --color-delft-200: #b9dffd;
+  --color-delft-300: #7cc7fc;
+  --color-delft-400: #36acf8;
+  --color-delft-500: #0c91e9;
+  --color-delft-600: #0072c7;
+  --color-delft-700: #015ba1;
+  --color-delft-800: #064e85;
+  --color-delft-900: #0b416e;
+  --color-delft-950: #072849;
+
+  /* ========================================
+   * COLORS - CREAM (Warm whites)
+   * Inspired by: Aged canvas, linen tones
+   * Use: Page backgrounds, surfaces
+   * ======================================== */
+
+  --color-cream-50: #fdfcfb;
+  --color-cream-100: #faf8f5;
+  --color-cream-200: #f5f1eb;
+  --color-cream-300: #ede6db;
+  --color-cream-400: #e2d6c6;
+  --color-cream-500: #d4c4ae;
+
+  /* ========================================
+   * COLORS - STONE (Warm neutrals)
+   * Replaces cold gray scale
+   * ======================================== */
+
+  --color-stone-50: #fafaf9;
+  --color-stone-100: #f5f5f4;
+  --color-stone-200: #e7e5e4;
+  --color-stone-300: #d6d3d1;
+  --color-stone-400: #a8a29e;
+  --color-stone-500: #78716c;
+  --color-stone-600: #57534e;
+  --color-stone-700: #44403c;
+  --color-stone-800: #292524;
+  --color-stone-900: #1c1917;
+  --color-stone-950: #0c0a09;
+
+  /* Deep black for primary text */
+  --color-charcoal: #1a1814;
+
+  /* ========================================
+   * COLORS - SEMANTIC
+   * ======================================== */
+
+  /* Success - Muted forest green */
+  --color-success-50: #f2f8f4;
+  --color-success-100: #e0f0e4;
+  --color-success-500: #3d8b5a;
+  --color-success-600: #2d7048;
+  --color-success-700: #265a3c;
+
+  /* Warning - Warm amber */
+  --color-warning-50: #fefbe8;
+  --color-warning-100: #fef4c3;
+  --color-warning-500: #d9a404;
+  --color-warning-600: #b88302;
+
+  /* Error - Muted red */
+  --color-error-50: #fef3f2;
+  --color-error-100: #fee4e2;
+  --color-error-500: #d93825;
+  --color-error-600: #b9281a;
+
+  /* ========================================
+   * SHADOWS
+   * Warm-tinted shadows (not pure black)
+   * ======================================== */
+
+  --shadow-sm: 0 1px 2px 0 rgb(28 25 23 / 0.05);
+  --shadow-DEFAULT: 0 1px 3px 0 rgb(28 25 23 / 0.1), 0 1px 2px -1px rgb(28 25 23 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(28 25 23 / 0.1), 0 2px 4px -2px rgb(28 25 23 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(28 25 23 / 0.1), 0 4px 6px -4px rgb(28 25 23 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(28 25 23 / 0.1), 0 8px 10px -6px rgb(28 25 23 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(28 25 23 / 0.25);
+
+  /* Golden glow for cards */
+  --shadow-gold: 0 4px 14px -2px rgb(233 168 54 / 0.15);
+  --shadow-gold-lg: 0 10px 30px -5px rgb(233 168 54 / 0.2);
+
+  /* ========================================
+   * TRANSITIONS
+   * Custom easings for brand feel
+   * ======================================== */
+
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-regal: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ========================================
+   * LAYOUT
+   * ======================================== */
+
+  --container-2xl: 1400px;
+}
+
+/* ========================================
+ * BASE LAYER
+ * Global defaults
+ * ======================================== */
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: var(--color-charcoal);
+    background-color: var(--color-cream-50);
+  }
+
+  /* Default heading styles */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--color-charcoal);
+  }
+
+  h1 { font-size: 2.25rem; font-weight: 700; }
+  h2 { font-size: 1.875rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+
+  @media (min-width: 768px) {
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.875rem; }
+  }
+}
+
+/* ========================================
+ * COMPONENT LAYER
+ * Reusable patterns
+ * ======================================== */
+
+@layer components {
+  /* Primary button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center
+           px-6 py-3 rounded-md
+           bg-ochre-500 text-charcoal
+           font-semibold text-sm tracking-wide
+           transition-all duration-150
+           hover:bg-ochre-600
+           active:bg-ochre-700
+           disabled:bg-ochre-200 disabled:text-stone-400 disabled:cursor-not-allowed;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: var(--shadow-gold);
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center
+           px-6 py-3 rounded-md
+           bg-burgundy-800 text-cream-100
+           font-semibold text-sm tracking-wide
+           transition-all duration-150
+           hover:bg-burgundy-900
+           active:bg-burgundy-950
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Ghost/outline button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center
+           px-6 py-3 rounded-md
+           border-2 border-charcoal text-charcoal bg-transparent
+           font-semibold text-sm tracking-wide
+           transition-all duration-150
+           hover:bg-charcoal hover:text-cream-100
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Card with hover effects */
+  .card-interactive {
+    @apply relative rounded-lg overflow-hidden
+           ring-2 ring-transparent
+           transition-all duration-300;
+    transition-timing-function: var(--ease-regal);
+  }
+  .card-interactive:hover {
+    @apply ring-ochre-300;
+    box-shadow: var(--shadow-gold);
+    transform: translateY(-2px);
+  }
+
+  /* Selected card state */
+  .card-selected {
+    @apply ring-4 ring-ochre-500;
+    box-shadow: var(--shadow-gold-lg);
+  }
+
+  /* Royal frame corners decoration */
+  .royal-frame {
+    @apply relative;
+  }
+  .royal-frame::before,
+  .royal-frame::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--color-ochre-300);
+    pointer-events: none;
+  }
+  .royal-frame::before {
+    top: -1px;
+    left: -1px;
+    border-right: none;
+    border-bottom: none;
+  }
+  .royal-frame::after {
+    bottom: -1px;
+    right: -1px;
+    border-left: none;
+    border-top: none;
+  }
+
+  /* Gilded text effect */
+  .text-gilded {
+    background: linear-gradient(
+      135deg,
+      var(--color-ochre-600) 0%,
+      var(--color-ochre-400) 50%,
+      var(--color-ochre-600) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Portrait vignette hover effect */
+  .portrait-vignette {
+    @apply relative;
+  }
+  .portrait-vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 60px rgba(28, 25, 23, 0);
+    transition: box-shadow 500ms var(--ease-regal);
+    pointer-events: none;
+  }
+  .portrait-vignette:hover::after {
+    box-shadow: inset 0 0 60px rgba(28, 25, 23, 0.3);
+  }
+}
+
+/* ========================================
+ * UTILITIES LAYER
+ * Custom utilities
+ * ======================================== */
+
+@layer utilities {
+  /* Font family utilities */
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* Transition timing utilities */
+  .ease-regal {
+    transition-timing-function: var(--ease-regal);
+  }
+  .ease-smooth {
+    transition-timing-function: var(--ease-smooth);
+  }
+
+  /* Shadow utilities */
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+  .shadow-gold-lg {
+    box-shadow: var(--shadow-gold-lg);
+  }
+
+  /* Staggered animation delays for page load */
+  .stagger-1 { animation-delay: 0ms; }
+  .stagger-2 { animation-delay: 75ms; }
+  .stagger-3 { animation-delay: 150ms; }
+  .stagger-4 { animation-delay: 225ms; }
+  .stagger-5 { animation-delay: 300ms; }
+  .stagger-6 { animation-delay: 375ms; }
+}
+
+/* ========================================
+ * ANIMATIONS
+ * ======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 500ms var(--ease-regal) both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 300ms var(--ease-regal) both;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 300ms var(--ease-regal) both;
 }

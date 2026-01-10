@@ -34,21 +34,21 @@ export function StepReview() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">Review Your Order</h2>
-        <p className="mt-2 text-gray-600">
+        <h2 className="font-display text-3xl font-bold text-charcoal">Review Your Order</h2>
+        <p className="mt-3 text-stone-600">
           Check your selections before adding to cart.
         </p>
       </div>
 
       {/* Review summary */}
-      <div className="bg-gray-50 rounded-lg overflow-hidden">
+      <div className="bg-cream-100 rounded-lg overflow-hidden border border-cream-300">
         {/* Photo preview */}
         {state.uploadedImageUrl && (
-          <div className="p-6 bg-white border-b">
+          <div className="p-6 bg-white border-b border-cream-200">
             <div className="flex gap-6">
-              <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0">
+              <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-ochre-200 shadow-gold">
                 <img
                   src={state.uploadedImageUrl}
                   alt="Your pet"
@@ -56,21 +56,21 @@ export function StepReview() {
                 />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">{state.productTitle}</h3>
-                <p className="text-sm text-gray-500 mt-1">Custom pet portrait</p>
+                <h3 className="font-display text-xl font-semibold text-charcoal">{state.productTitle}</h3>
+                <p className="text-sm text-stone-500 mt-1">Custom pet portrait</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Selections */}
-        <div className="divide-y">
+        <div className="divide-y divide-cream-200">
           {/* Costume */}
           {state.selectedCostume && (
             <div className="p-4 flex justify-between items-center">
               <div>
-                <p className="text-sm text-gray-500">Style</p>
-                <p className="font-medium text-gray-900">{state.selectedCostume.label}</p>
+                <p className="text-sm text-stone-500">Style</p>
+                <p className="font-medium text-charcoal">{state.selectedCostume.label}</p>
               </div>
             </div>
           )}
@@ -79,12 +79,12 @@ export function StepReview() {
           {state.selectedSize && (
             <div className="p-4 flex justify-between items-center">
               <div>
-                <p className="text-sm text-gray-500">Size</p>
-                <p className="font-medium text-gray-900">
+                <p className="text-sm text-stone-500">Size</p>
+                <p className="font-medium text-charcoal">
                   {state.selectedSize.label} ({state.selectedSize.dimensions})
                 </p>
               </div>
-              <p className="font-medium text-gray-900">
+              <p className="font-display font-semibold text-ochre-700">
                 {formatPrice(state.selectedSize.price)}
               </p>
             </div>
@@ -93,13 +93,13 @@ export function StepReview() {
           {/* Frame */}
           <div className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-500">Frame</p>
-              <p className="font-medium text-gray-900">
+              <p className="text-sm text-stone-500">Frame</p>
+              <p className="font-medium text-charcoal">
                 {state.selectedFrame ? state.selectedFrame.label : "No frame (canvas only)"}
               </p>
             </div>
             {state.selectedFrame && (
-              <p className="font-medium text-gray-900">
+              <p className="font-display font-semibold text-ochre-700">
                 +{formatPrice(state.selectedFrame.price)}
               </p>
             )}
@@ -108,12 +108,12 @@ export function StepReview() {
           {/* Photo */}
           <div className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-500">Photo</p>
-              <p className="font-medium text-gray-900 truncate max-w-[200px]">
+              <p className="text-sm text-stone-500">Photo</p>
+              <p className="font-medium text-charcoal truncate max-w-[200px]">
                 {state.uploadedImageName ?? "Not uploaded"}
               </p>
             </div>
-            <span className="text-green-600 flex items-center text-sm">
+            <span className="text-success-600 flex items-center text-sm font-medium">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
@@ -123,10 +123,10 @@ export function StepReview() {
         </div>
 
         {/* Total */}
-        <div className="p-4 bg-white border-t">
+        <div className="p-5 bg-white border-t border-cream-200">
           <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold text-gray-900">Total</span>
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-lg font-semibold text-charcoal">Total</span>
+            <span className="font-display text-3xl font-bold text-ochre-700">
               {formatPrice(state.totalPrice)}
             </span>
           </div>
@@ -134,15 +134,15 @@ export function StepReview() {
       </div>
 
       {/* Satisfaction guarantee */}
-      <div className="bg-green-50 rounded-lg p-4 flex items-start gap-3">
+      <div className="bg-success-50 rounded-lg p-5 flex items-start gap-4 border border-success-200">
         <div className="flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-success-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
         </div>
         <div>
-          <h4 className="font-semibold text-green-900">100% Satisfaction Guarantee</h4>
-          <p className="text-sm text-green-700 mt-1">
+          <h4 className="font-display font-semibold text-success-800">100% Satisfaction Guarantee</h4>
+          <p className="text-sm text-success-700 mt-1">
             We'll work on unlimited revisions until you love your portrait. If you're still not satisfied, we'll provide a full refund.
           </p>
         </div>
@@ -153,14 +153,14 @@ export function StepReview() {
         <button
           onClick={previousStep}
           disabled={!canGoPrevious() || isAddingToCart}
-          className="px-6 py-3 text-gray-600 font-medium hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-3 text-stone-600 font-medium hover:text-charcoal disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           Back
         </button>
         <button
           onClick={handleAddToCart}
           disabled={isLoading || isAddingToCart}
-          className="px-8 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+          className="btn-primary px-8 py-3 flex items-center gap-2"
         >
           {isAddingToCart ? (
             <>

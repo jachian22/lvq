@@ -182,14 +182,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Apply promo code when it changes
-  useEffect(() => {
-    if (cart.id && activePromo) {
-      applyDiscount(activePromo.code);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePromo?.code]);
-
   // Cart drawer controls
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
@@ -300,6 +292,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     },
     [cart.id, locale, updateDiscountMutation]
   );
+
+  // Apply promo code when promo changes OR when cart becomes available
+  useEffect(() => {
+    if (!cart.id || !activePromo) return;
+
+    // Check if this promo is already applied to avoid duplicate requests
+    const isAlreadyApplied = cart.discountCodes.some(
+      (dc) => dc.code.toLowerCase() === activePromo.code.toLowerCase() && dc.applicable
+    );
+
+    if (!isAlreadyApplied) {
+      applyDiscount(activePromo.code);
+    }
+  }, [cart.id, activePromo?.code, cart.discountCodes, applyDiscount]);
 
   // Add Skip the Line product
   const addSkipTheLine = useCallback(async () => {

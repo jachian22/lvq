@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { localeSchema, DEFAULT_LOCALE } from "~/server/api/schemas";
 import {
   storefrontQuery,
   storefrontMutation,
@@ -20,14 +21,6 @@ import {
   type LocaleContext,
   type Cart,
 } from "~/server/shopify";
-
-/**
- * Locale schema for API inputs
- */
-const localeSchema = z.object({
-  country: z.enum(["NL", "DE", "FR", "BE", "GB", "US", "AT", "IT", "ES", "PT", "IE", "LU"]).default("NL"),
-  language: z.enum(["NL", "EN", "DE", "FR"]).default("NL"),
-});
 
 /**
  * Cart line attribute schema
@@ -71,7 +64,7 @@ export const cartRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontQuery<CartResponse>(
         GET_CART,
@@ -106,7 +99,7 @@ export const cartRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const cartInput = {
         lines: input.lines,
@@ -145,7 +138,7 @@ export const cartRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontMutation<CartLinesAddResponse>(
         ADD_CART_LINES,
@@ -183,7 +176,7 @@ export const cartRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontMutation<CartLinesUpdateResponse>(
         UPDATE_CART_LINES,
@@ -214,7 +207,7 @@ export const cartRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontMutation<CartLinesRemoveResponse>(
         REMOVE_CART_LINES,
@@ -245,7 +238,7 @@ export const cartRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontMutation<CartDiscountCodesUpdateResponse>(
         UPDATE_CART_DISCOUNT_CODES,
@@ -279,7 +272,7 @@ export const cartRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const locale: LocaleContext = input.locale ?? { country: "NL", language: "NL" };
+      const locale: LocaleContext = input.locale ?? DEFAULT_LOCALE;
 
       const response = await storefrontMutation<CartBuyerIdentityUpdateResponse>(
         UPDATE_CART_BUYER_IDENTITY,

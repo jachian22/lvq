@@ -31,37 +31,37 @@ export function SkipTheLineUpsell() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4 my-4">
-      <div className="flex items-start gap-3">
+    <div className="bg-gradient-to-r from-ochre-50 to-warning-50 border border-ochre-200 rounded-lg p-5 my-4 shadow-gold">
+      <div className="flex items-start gap-4">
         <div className="text-2xl">⚡</div>
         <div className="flex-1">
-          <h4 className="font-semibold text-gray-900">
+          <h4 className="font-display font-semibold text-charcoal">
             Skip the Line
           </h4>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-stone-600 mt-1">
             Get your portrait faster! Priority processing moves your order to the front of the queue.
           </p>
-          <ul className="text-xs text-gray-500 mt-2 space-y-1">
-            <li className="flex items-center gap-1">
-              <span className="text-green-600">✓</span>
+          <ul className="text-xs text-stone-500 mt-3 space-y-1.5">
+            <li className="flex items-center gap-1.5">
+              <span className="text-success-600">✓</span>
               Priority artist assignment
             </li>
-            <li className="flex items-center gap-1">
-              <span className="text-green-600">✓</span>
+            <li className="flex items-center gap-1.5">
+              <span className="text-success-600">✓</span>
               Faster preview delivery
             </li>
-            <li className="flex items-center gap-1">
-              <span className="text-green-600">✓</span>
+            <li className="flex items-center gap-1.5">
+              <span className="text-success-600">✓</span>
               Express shipping included
             </li>
           </ul>
         </div>
         <div className="text-right">
-          <p className="font-bold text-lg">{formatPrice(29.99)}</p>
+          <p className="font-display font-bold text-xl text-ochre-700">{formatPrice(29.99)}</p>
           <button
             onClick={handleAdd}
             disabled={isLoading || isAdding}
-            className="mt-2 px-4 py-2 bg-amber-500 text-white text-sm font-medium rounded hover:bg-amber-600 transition-colors disabled:opacity-50"
+            className="mt-3 px-5 py-2 bg-ochre-500 text-charcoal text-sm font-semibold rounded-lg hover:bg-ochre-600 hover:shadow-gold transition-all duration-200 disabled:opacity-50"
           >
             {isAdding ? "Adding..." : "Add"}
           </button>

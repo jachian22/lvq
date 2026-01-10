@@ -1,5 +1,5 @@
 import { type AppType } from "next/app";
-import { Geist } from "next/font/google";
+import { Playfair_Display, DM_Sans } from "next/font/google";
 
 import { api } from "~/utils/api";
 import { LocaleProvider, PromoProvider, CartProvider, WizardProvider } from "~/contexts";
@@ -11,8 +11,20 @@ import { ChatWidget } from "~/components/chat/ChatWidget";
 
 import "~/styles/globals.css";
 
-const geist = Geist({
+// Display font: Elegant serif for headings and brand moments
+const playfair = Playfair_Display({
   subsets: ["latin"],
+  variable: "--font-playfair-display",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "900"],
+});
+
+// Body font: Clean geometric sans for UI and copy
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 const MyApp: AppType = ({ Component, pageProps }) => {
@@ -21,7 +33,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <PromoProvider>
         <CartProvider>
           <WizardProvider>
-            <div className={`${geist.className} min-h-screen flex flex-col`}>
+            <div className={`${playfair.variable} ${dmSans.variable} min-h-screen flex flex-col bg-cream-50`}>
               {/* Promo banner (when active) */}
               <PromoBanner />
 
