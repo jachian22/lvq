@@ -99,30 +99,32 @@ export function LocaleProvider({
   children: ReactNode;
   initialLocale?: Partial<LocaleConfig>;
 }) {
-  // Initialize from cookies, browser detection, or props
-  const [locale, setLocale] = useState<LocaleConfig>(() => {
-    // Try to read from cookies (client-side only)
-    if (typeof window !== "undefined") {
-      const savedCountry = Cookies.get(COOKIE_COUNTRY) as CountryCode | undefined;
-      const savedLanguage = Cookies.get(COOKIE_LANGUAGE) as LanguageCode | undefined;
-      const savedCurrency = Cookies.get(COOKIE_CURRENCY) as CurrencyCode | undefined;
-
-      // Auto-detect currency from browser if not saved
-      const detectedCurrency = savedCurrency ?? detectCurrencyFromBrowser();
-
-      return {
-        country: savedCountry ?? initialLocale?.country ?? defaultLocale.country,
-        language: savedLanguage ?? initialLocale?.language ?? defaultLocale.language,
-        currency: detectedCurrency,
-      };
-    }
-
-    return {
-      country: initialLocale?.country ?? defaultLocale.country,
-      language: initialLocale?.language ?? defaultLocale.language,
-      currency: initialLocale?.currency ?? defaultLocale.currency,
-    };
+  // Initialize with default values for consistent SSR hydration
+  const [locale, setLocale] = useState<LocaleConfig>({
+    country: initialLocale?.country ?? defaultLocale.country,
+    language: initialLocale?.language ?? defaultLocale.language,
+    currency: initialLocale?.currency ?? defaultLocale.currency,
   });
+
+  // After hydration, load from cookies or detect from browser
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    if (isHydrated) return;
+    setIsHydrated(true);
+
+    const savedCountry = Cookies.get(COOKIE_COUNTRY) as CountryCode | undefined;
+    const savedLanguage = Cookies.get(COOKIE_LANGUAGE) as LanguageCode | undefined;
+    const savedCurrency = Cookies.get(COOKIE_CURRENCY) as CurrencyCode | undefined;
+
+    // Auto-detect currency from browser if not saved
+    const detectedCurrency = savedCurrency ?? detectCurrencyFromBrowser();
+
+    setLocale({
+      country: savedCountry ?? initialLocale?.country ?? defaultLocale.country,
+      language: savedLanguage ?? initialLocale?.language ?? defaultLocale.language,
+      currency: detectedCurrency,
+    });
+  }, [isHydrated, initialLocale]);
 
   // Persist to cookies when locale changes
   useEffect(() => {

@@ -49,6 +49,10 @@ export const env = createEnv({
     NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: z.string().min(1),
     NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN: z.string().min(1),
 
+    // General Translation (i18n)
+    NEXT_PUBLIC_GT_PROJECT_ID: z.string().optional(),
+    NEXT_PUBLIC_GT_DEV_API_KEY: z.string().optional(),
+
     // Site URL for client-side use
     NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   },
@@ -76,6 +80,8 @@ export const env = createEnv({
     // Client
     NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN,
     NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN,
+    NEXT_PUBLIC_GT_PROJECT_ID: process.env.NEXT_PUBLIC_GT_PROJECT_ID,
+    NEXT_PUBLIC_GT_DEV_API_KEY: process.env.NEXT_PUBLIC_GT_DEV_API_KEY,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
 

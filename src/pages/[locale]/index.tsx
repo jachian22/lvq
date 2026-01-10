@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { type GetServerSideProps } from "next";
+import { T } from "gt-react";
 import { api } from "~/utils/api";
 import { ProductCard } from "~/components/product/ProductCard";
 
@@ -40,26 +41,25 @@ export default function HomePage({ locale }: HomePageProps) {
         <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-ochre-500/30 hidden md:block" />
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="font-display text-4xl md:text-6xl font-bold mb-6">
-            Transform Your Pet Into{" "}
-            <span className="text-ochre-500">Royalty</span>
+          <h1 className="font-display text-4xl md:text-6xl font-bold mb-6 text-white">
+            <T>Transformeer je huisdier in</T>{" "}
+            <span className="text-ochre-500"><T>Royalty</T></span>
           </h1>
           <p className="text-xl text-stone-300 max-w-2xl mx-auto mb-10">
-            Hand-crafted custom portraits that turn your beloved pets into majestic works of art.
-            100% satisfaction guaranteed.
+            <T>Handgemaakte portretten die je geliefde huisdieren omtoveren in majestueuze kunstwerken. 100% tevredenheid gegarandeerd.</T>
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link
               href={`/${locale}/collections/royal-portraits`}
               className="btn-primary px-8 py-3.5"
             >
-              Shop Now
+              <T>Shop nu</T>
             </Link>
             <Link
               href={`/${locale}/pages/how-it-works`}
               className="btn-ghost px-8 py-3.5"
             >
-              How It Works
+              <T>Hoe het werkt</T>
             </Link>
           </div>
         </div>
@@ -68,14 +68,16 @@ export default function HomePage({ locale }: HomePageProps) {
       {/* Featured collections */}
       <section className="py-20 bg-cream-100">
         <div className="container mx-auto px-4">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-center text-charcoal mb-14">Our Collections</h2>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-center text-charcoal mb-14">
+            <T>Onze Collecties</T>
+          </h2>
 
           {collectionsQuery.isLoading ? (
             <div className="flex justify-center">
-              <div className="animate-pulse text-stone-500">Loading collections...</div>
+              <div className="animate-pulse text-stone-500"><T>Collecties laden...</T></div>
             </div>
           ) : collectionsQuery.data?.collections.length === 0 ? (
-            <p className="text-center text-stone-500">No collections found</p>
+            <p className="text-center text-stone-500"><T>Geen collecties gevonden</T></p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {collectionsQuery.data?.collections.map((collection) => (
@@ -93,16 +95,13 @@ export default function HomePage({ locale }: HomePageProps) {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-stone-400">
-                        No image
+                        <T>Geen afbeelding</T>
                       </div>
                     )}
                   </div>
                   <h3 className="mt-5 font-display text-xl font-semibold text-charcoal group-hover:text-ochre-600 transition-colors duration-200">
                     {collection.title}
                   </h3>
-                  <p className="text-stone-600 text-sm mt-1">
-                    Shop {collection.title}
-                  </p>
                 </Link>
               ))}
             </div>
@@ -113,14 +112,16 @@ export default function HomePage({ locale }: HomePageProps) {
       {/* Featured products */}
       <section className="py-20 bg-cream-50">
         <div className="container mx-auto px-4">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-center text-charcoal mb-14">Popular Portraits</h2>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-center text-charcoal mb-14">
+            <T>Populaire Portretten</T>
+          </h2>
 
           {productsQuery.isLoading ? (
             <div className="flex justify-center">
-              <div className="animate-pulse text-stone-500">Loading products...</div>
+              <div className="animate-pulse text-stone-500"><T>Producten laden...</T></div>
             </div>
           ) : productsQuery.data?.products.length === 0 ? (
-            <p className="text-center text-stone-500">No products found</p>
+            <p className="text-center text-stone-500"><T>Geen producten gevonden</T></p>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {productsQuery.data?.products.map((product) => (
@@ -134,7 +135,7 @@ export default function HomePage({ locale }: HomePageProps) {
               href={`/${locale}/collections/all`}
               className="btn-ghost px-8 py-3.5"
             >
-              View All Products
+              <T>Bekijk alle producten</T>
             </Link>
           </div>
         </div>
@@ -148,27 +149,33 @@ export default function HomePage({ locale }: HomePageProps) {
               <div className="w-16 h-16 mx-auto bg-ochre-100 rounded-full flex items-center justify-center group-hover:bg-ochre-200 transition-colors duration-300">
                 <span className="text-3xl">🎨</span>
               </div>
-              <h3 className="font-display text-xl font-semibold text-charcoal mt-5">Hand-Crafted</h3>
+              <h3 className="font-display text-xl font-semibold text-charcoal mt-5">
+                <T>Handgemaakt</T>
+              </h3>
               <p className="text-stone-600 text-sm mt-2 max-w-xs mx-auto">
-                Each portrait is created by our talented artists with attention to detail.
+                <T>Elk portret wordt gemaakt door onze getalenteerde kunstenaars met oog voor detail.</T>
               </p>
             </div>
             <div className="group">
               <div className="w-16 h-16 mx-auto bg-ochre-100 rounded-full flex items-center justify-center group-hover:bg-ochre-200 transition-colors duration-300">
                 <span className="text-3xl">💯</span>
               </div>
-              <h3 className="font-display text-xl font-semibold text-charcoal mt-5">100% Satisfaction</h3>
+              <h3 className="font-display text-xl font-semibold text-charcoal mt-5">
+                <T>100% Tevredenheid</T>
+              </h3>
               <p className="text-stone-600 text-sm mt-2 max-w-xs mx-auto">
-                Unlimited revisions until you love it, or your money back.
+                <T>Onbeperkte revisies tot je het geweldig vindt, of je geld terug.</T>
               </p>
             </div>
             <div className="group">
               <div className="w-16 h-16 mx-auto bg-ochre-100 rounded-full flex items-center justify-center group-hover:bg-ochre-200 transition-colors duration-300">
                 <span className="text-3xl">🚚</span>
               </div>
-              <h3 className="font-display text-xl font-semibold text-charcoal mt-5">Free Shipping</h3>
+              <h3 className="font-display text-xl font-semibold text-charcoal mt-5">
+                <T>Gratis verzending</T>
+              </h3>
               <p className="text-stone-600 text-sm mt-2 max-w-xs mx-auto">
-                Free worldwide shipping on all orders.
+                <T>Gratis wereldwijde verzending op alle bestellingen.</T>
               </p>
             </div>
           </div>

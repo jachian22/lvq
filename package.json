@@ -31,6 +31,7 @@
     "graphql": "^16.12.0",
     "graphql-request": "^7.4.0",
     "gt-next": "^6.12.5",
+    "gt-react": "^10.10.2",
     "inngest": "^3.48.1",
     "js-cookie": "^3.0.5",
     "next": "^15.2.3",
@@ -48,6 +49,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "drizzle-kit": "^0.30.5",
+    "gtx-cli": "^2.5.44",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.0.15",
     "typescript": "^5.8.2"

@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { T } from "gt-react";
 import { useCart, useLocale, supportedLanguages } from "~/contexts";
+import type { LanguageCode } from "~/server/shopify";
 
 /**
  * Header component
@@ -8,8 +11,30 @@ import { useCart, useLocale, supportedLanguages } from "~/contexts";
  * Design: Clean white with cream accent, ochre highlights.
  */
 export function Header() {
+  const router = useRouter();
   const { cart, toggleCart } = useCart();
   const { locale, setLanguage } = useLocale();
+
+  // Handle language change - update context and navigate
+  const handleLanguageChange = (newLanguage: LanguageCode) => {
+    setLanguage(newLanguage);
+
+    // Update URL to new locale
+    const newLocale = newLanguage.toLowerCase();
+    const currentPath = router.asPath;
+
+    // Replace locale in path (e.g., /nl/collections/pet -> /en/collections/pet)
+    const pathSegments = currentPath.split("/");
+    if (pathSegments[1] && ["nl", "en", "de", "fr"].includes(pathSegments[1])) {
+      pathSegments[1] = newLocale;
+    } else {
+      // If no locale in path, add it
+      pathSegments.splice(1, 0, newLocale);
+    }
+
+    const newPath = pathSegments.join("/") || `/${newLocale}`;
+    void router.push(newPath);
+  };
 
   return (
     <header className="bg-white border-b border-cream-200 sticky top-0 z-40">
@@ -25,22 +50,22 @@ export function Header() {
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <Link
-              href="/collections/royal-portraits"
+              href={`/${locale.language.toLowerCase()}/collections/pet`}
               className="text-sm font-medium text-stone-600 hover:text-charcoal uppercase tracking-wide transition-colors"
             >
-              Royal Portraits
+              <T>Portretten</T>
             </Link>
             <Link
-              href="/collections/military"
+              href={`/${locale.language.toLowerCase()}/collections/illustration`}
               className="text-sm font-medium text-stone-600 hover:text-charcoal uppercase tracking-wide transition-colors"
             >
-              Military
+              <T>Illustraties</T>
             </Link>
             <Link
-              href="/collections/renaissance"
+              href={`/${locale.language.toLowerCase()}/collections/pet-jigsaw-puzzle`}
               className="text-sm font-medium text-stone-600 hover:text-charcoal uppercase tracking-wide transition-colors"
             >
-              Renaissance
+              <T>Puzzels</T>
             </Link>
           </nav>
 
@@ -49,7 +74,7 @@ export function Header() {
             {/* Language selector */}
             <select
               value={locale.language}
-              onChange={(e) => setLanguage(e.target.value as "NL" | "EN" | "DE" | "FR")}
+              onChange={(e) => handleLanguageChange(e.target.value as LanguageCode)}
               className="text-sm font-medium text-stone-600 border-none bg-transparent cursor-pointer focus:ring-0 focus:outline-none"
             >
               {supportedLanguages.map((lang) => (

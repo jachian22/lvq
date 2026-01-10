@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
  * Supported locales
  */
 const SUPPORTED_LOCALES = ["en", "nl", "de", "fr"];
-const DEFAULT_LOCALE = "en";
+const DEFAULT_LOCALE = "nl";
 
 /**
  * Cookie names
