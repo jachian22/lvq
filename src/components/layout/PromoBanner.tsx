@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { usePromo } from "~/contexts";
 
 /**
@@ -5,9 +6,32 @@ import { usePromo } from "~/contexts";
  *
  * Displays a persistent banner at the top of the page when a promo code is active.
  * Design: Burgundy background with cream text, subtle elegance.
+ * Features slide-down entrance and slide-up exit animations.
  */
 export function PromoBanner() {
   const { activePromo, clearPromo } = usePromo();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+
+  // Handle entrance animation
+  useEffect(() => {
+    if (activePromo) {
+      // Small delay to ensure animation plays
+      const timer = setTimeout(() => setIsVisible(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
+    }
+  }, [activePromo]);
+
+  // Handle dismiss with exit animation
+  const handleDismiss = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      clearPromo();
+      setIsExiting(false);
+    }, 200);
+  };
 
   if (!activePromo) {
     return null;
@@ -52,24 +76,32 @@ export function PromoBanner() {
   const expiryText = getExpiryText();
 
   return (
-    <div className="bg-burgundy-800 text-cream-100 py-2.5 px-4">
+    <div
+      className={`bg-burgundy-800 text-cream-100 py-2.5 px-4 overflow-hidden transition-all duration-300 ${
+        isExiting
+          ? "animate-slide-up"
+          : isVisible
+          ? "animate-slide-down"
+          : "opacity-0 -translate-y-full"
+      }`}
+    >
       <div className="container mx-auto max-w-7xl flex items-center justify-between">
         <div className="flex items-center gap-3 flex-1 justify-center text-sm">
-          <span className="font-mono text-xs bg-burgundy-900 px-2 py-0.5 rounded tracking-wide">
+          <span className="font-mono text-xs bg-burgundy-900 px-2 py-0.5 rounded tracking-wide shadow-inner">
             {activePromo.code}
           </span>
           <span className="font-medium">
             {getMessage()}
           </span>
           {expiryText && (
-            <span className="hidden sm:inline text-burgundy-200 text-xs">
+            <span className="hidden sm:inline text-burgundy-200 text-xs animate-pulse">
               {expiryText}
             </span>
           )}
         </div>
         <button
-          onClick={clearPromo}
-          className="text-burgundy-300 hover:text-cream-100 p-1 transition-colors ml-4"
+          onClick={handleDismiss}
+          className="text-burgundy-300 hover:text-cream-100 p-1 transition-all duration-200 ml-4 hover:rotate-90"
           aria-label="Remove discount code"
         >
           <svg

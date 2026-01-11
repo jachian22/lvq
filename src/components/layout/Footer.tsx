@@ -24,13 +24,13 @@ export function Footer() {
             <p className="text-stone-400 text-sm leading-relaxed">
               <T>Transformeer je geliefde huisdieren in prachtige koninklijke portretten. Met de hand gemaakt door onze getalenteerde kunstenaars.</T>
             </p>
-            {/* Social Links */}
+            {/* Social Links with hover effects */}
             <div className="flex gap-4 pt-2">
               <a
                 href="https://instagram.com/lavistique"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-stone-400 hover:text-cream-100 transition-colors"
+                className="text-stone-400 hover:text-cream-100 hover:scale-110 hover:-translate-y-0.5 transition-all duration-200"
                 aria-label="Instagram"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -41,7 +41,7 @@ export function Footer() {
                 href="https://www.facebook.com/lavistique"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-stone-400 hover:text-cream-100 transition-colors"
+                className="text-stone-400 hover:text-cream-100 hover:scale-110 hover:-translate-y-0.5 transition-all duration-200"
                 aria-label="Facebook"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -58,22 +58,22 @@ export function Footer() {
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href={`${localePrefix}/collections/pet`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/collections/pet`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Portretten</T>
                 </Link>
               </li>
               <li>
-                <Link href={`${localePrefix}/collections/illustration`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/collections/illustration`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Illustraties</T>
                 </Link>
               </li>
               <li>
-                <Link href={`${localePrefix}/collections/pet-jigsaw-puzzle`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/collections/pet-jigsaw-puzzle`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Puzzels</T>
                 </Link>
               </li>
               <li>
-                <Link href={`${localePrefix}/products/lavistique-gift-card`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/products/lavistique-gift-card`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Cadeaubonnen</T>
                 </Link>
               </li>
@@ -87,22 +87,22 @@ export function Footer() {
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href={`${localePrefix}/pages/how-it-works`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/pages/how-it-works`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Hoe het werkt</T>
                 </Link>
               </li>
               <li>
-                <Link href={`${localePrefix}/pages/frequently-asked-questions`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/pages/frequently-asked-questions`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Veelgestelde vragen</T>
                 </Link>
               </li>
               <li>
-                <Link href={`${localePrefix}/pages/photo-guidelines`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/pages/photo-guidelines`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Foto richtlijnen</T>
                 </Link>
               </li>
               <li>
-                <Link href={`${localePrefix}/pages/contact`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/pages/contact`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Contact</T>
                 </Link>
               </li>
@@ -116,17 +116,17 @@ export function Footer() {
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href={`${localePrefix}/pages/about-us`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/pages/about-us`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Over ons</T>
                 </Link>
               </li>
               <li>
-                <Link href={`${localePrefix}/pages/reviews`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/pages/reviews`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Recensies</T>
                 </Link>
               </li>
               <li>
-                <Link href={`${localePrefix}/blogs`} className="text-stone-400 hover:text-cream-100 transition-colors">
+                <Link href={`${localePrefix}/blogs`} className="text-stone-400 hover:text-cream-100 transition-colors inline-block hover:translate-x-1 duration-200">
                   <T>Blog</T>
                 </Link>
               </li>
@@ -152,11 +152,11 @@ export function Footer() {
               <input
                 type="email"
                 placeholder="Je e-mailadres"
-                className="flex-1 px-4 py-2.5 rounded-md bg-stone-800 text-cream-100 placeholder-stone-500 text-sm border border-stone-700 focus:outline-none focus:ring-2 focus:ring-ochre-500 focus:border-transparent transition-all"
+                className="flex-1 px-4 py-2.5 rounded-md bg-stone-800 text-cream-100 placeholder-stone-500 text-sm border border-stone-700 focus:outline-none focus:ring-2 focus:ring-ochre-500 focus:border-transparent transition-all duration-200"
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-ochre-500 text-charcoal rounded-md hover:bg-ochre-600 transition-colors text-sm font-semibold tracking-wide"
+                className="px-5 py-2.5 bg-ochre-500 text-charcoal rounded-md hover:bg-ochre-600 hover:shadow-gold transition-all duration-200 text-sm font-semibold tracking-wide hover:scale-105 active:scale-95"
               >
                 <T>Inschrijven</T>
               </button>
