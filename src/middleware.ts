@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
  * Supported locales
  */
 const SUPPORTED_LOCALES = ["en", "nl", "de", "fr"];
-const DEFAULT_LOCALE = "en";
+const DEFAULT_LOCALE = "nl";
 
 /**
  * Cookie names
@@ -30,7 +30,8 @@ const PUBLIC_PATHS = [
  *
  * Handles:
  * 1. Promo code capture from URL params
- * 2. Locale detection and redirection
+ * 2. Locale detection and URL-to-cookie sync
+ * 3. Root path redirect to preferred locale
  */
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
@@ -40,10 +41,34 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ==========================================================================
+  // 1. LOCALE DETECTION & URL-TO-COOKIE SYNC
+  // ==========================================================================
+  const urlLocale = pathname.split("/")[1];
+  const isValidLocale = SUPPORTED_LOCALES.includes(urlLocale ?? "");
+
+  // Handle root path: redirect to saved locale or default
+  if (pathname === "/") {
+    const savedLocale = request.cookies.get(COOKIE_LOCALE)?.value?.toLowerCase();
+    const targetLocale = SUPPORTED_LOCALES.includes(savedLocale ?? "")
+      ? savedLocale
+      : DEFAULT_LOCALE;
+    return NextResponse.redirect(new URL(`/${targetLocale}`, request.url));
+  }
+
   const response = NextResponse.next();
 
+  // If URL has valid locale, sync cookie to URL (URL is source of truth)
+  if (isValidLocale) {
+    response.cookies.set(COOKIE_LOCALE, urlLocale!.toUpperCase(), {
+      maxAge: COOKIE_MAX_AGE,
+      path: "/",
+      sameSite: "lax",
+    });
+  }
+
   // ==========================================================================
-  // 1. PROMO CODE CAPTURE
+  // 2. PROMO CODE CAPTURE
   // ==========================================================================
   const promoCode = searchParams.get("promo");
   if (promoCode) {
@@ -53,17 +78,7 @@ export function middleware(request: NextRequest) {
       path: "/",
       sameSite: "lax",
     });
-
-    // Remove promo param from URL (optional - keeps URL clean)
-    // Uncomment if you want to remove it:
-    // const cleanUrl = new URL(request.url);
-    // cleanUrl.searchParams.delete("promo");
-    // return NextResponse.redirect(cleanUrl);
   }
-
-  // ==========================================================================
-  // 2. LOCALE DETECTION (disabled - links include locale prefix)
-  // ==========================================================================
 
   return response;
 }

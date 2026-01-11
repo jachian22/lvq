@@ -67,41 +67,72 @@ const COOKIE_CURRENCY = "lvq_currency";
 const COOKIE_EXPIRES = 365; // days
 
 /**
+ * Auto-detect currency from browser locale
+ * US visitors get USD, everyone else gets EUR (EU-focused business)
+ */
+function detectCurrencyFromBrowser(): CurrencyCode {
+  if (typeof window === "undefined") return "EUR";
+
+  const browserLocale = navigator.language; // e.g., "en-US", "nl-NL", "de-DE"
+
+  // US visitors get USD
+  if (browserLocale === "en-US" || browserLocale.endsWith("-US")) {
+    return "USD";
+  }
+
+  // Default to EUR for everyone else (EU-focused business)
+  return "EUR";
+}
+
+/**
  * Create the context
  */
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 /**
  * LocaleProvider component
+ *
+ * @param serverLocale - Locale from getServerSideProps (source of truth for language)
  */
 export function LocaleProvider({
   children,
-  initialLocale,
+  serverLocale,
 }: {
   children: ReactNode;
-  initialLocale?: Partial<LocaleConfig>;
+  serverLocale?: string;
 }) {
-  // Initialize from cookies or props
-  const [locale, setLocale] = useState<LocaleConfig>(() => {
-    // Try to read from cookies (client-side only)
-    if (typeof window !== "undefined") {
-      const savedCountry = Cookies.get(COOKIE_COUNTRY) as CountryCode | undefined;
-      const savedLanguage = Cookies.get(COOKIE_LANGUAGE) as LanguageCode | undefined;
-      const savedCurrency = Cookies.get(COOKIE_CURRENCY) as CurrencyCode | undefined;
+  // Convert server locale to language code (e.g., "en" -> "EN")
+  const serverLanguage = serverLocale?.toUpperCase() as LanguageCode | undefined;
+  const validServerLang =
+    serverLanguage && ["NL", "EN", "DE", "FR"].includes(serverLanguage)
+      ? serverLanguage
+      : undefined;
 
-      return {
-        country: savedCountry ?? initialLocale?.country ?? defaultLocale.country,
-        language: savedLanguage ?? initialLocale?.language ?? defaultLocale.language,
-        currency: savedCurrency ?? initialLocale?.currency ?? defaultLocale.currency,
-      };
-    }
-
-    return {
-      country: initialLocale?.country ?? defaultLocale.country,
-      language: initialLocale?.language ?? defaultLocale.language,
-      currency: initialLocale?.currency ?? defaultLocale.currency,
-    };
+  // Initialize with server locale if available (prevents hydration mismatch)
+  const [locale, setLocale] = useState<LocaleConfig>({
+    country: defaultLocale.country,
+    language: validServerLang ?? defaultLocale.language,
+    currency: defaultLocale.currency,
   });
+
+  // After hydration, load currency preference from cookies/browser
+  // Note: We do NOT load language from cookies - URL (serverLocale) is source of truth
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    if (isHydrated) return;
+    setIsHydrated(true);
+
+    const savedCurrency = Cookies.get(COOKIE_CURRENCY) as CurrencyCode | undefined;
+
+    // Auto-detect currency from browser if not saved
+    const detectedCurrency = savedCurrency ?? detectCurrencyFromBrowser();
+
+    setLocale((prev) => ({
+      ...prev,
+      currency: detectedCurrency,
+      // Don't override language - URL/server is source of truth
+    }));
+  }, [isHydrated]);
 
   // Persist to cookies when locale changes
   useEffect(() => {

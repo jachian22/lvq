@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { T } from "gt-react";
 import { useLocale } from "~/contexts/LocaleContext";
 
 /**
@@ -21,8 +22,7 @@ export function Footer() {
               La <span className="text-ochre-500">Vistique</span>
             </h3>
             <p className="text-stone-400 text-sm leading-relaxed">
-              Transform your beloved pets into stunning royal portraits.
-              Hand-crafted by our talented artists.
+              <T>Transformeer je geliefde huisdieren in prachtige koninklijke portretten. Met de hand gemaakt door onze getalenteerde kunstenaars.</T>
             </p>
             {/* Social Links */}
             <div className="flex gap-4 pt-2">
@@ -54,27 +54,27 @@ export function Footer() {
           {/* Shop */}
           <div className="space-y-4">
             <h4 className="font-display text-sm font-semibold text-cream-100 uppercase tracking-wider">
-              Shop
+              <T>Shop</T>
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href={`${localePrefix}/collections/pet`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  Portraits
+                  <T>Portretten</T>
                 </Link>
               </li>
               <li>
                 <Link href={`${localePrefix}/collections/illustration`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  Illustrations
+                  <T>Illustraties</T>
                 </Link>
               </li>
               <li>
                 <Link href={`${localePrefix}/collections/pet-jigsaw-puzzle`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  Puzzles
+                  <T>Puzzels</T>
                 </Link>
               </li>
               <li>
                 <Link href={`${localePrefix}/products/lavistique-gift-card`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  Gift Cards
+                  <T>Cadeaubonnen</T>
                 </Link>
               </li>
             </ul>
@@ -83,27 +83,27 @@ export function Footer() {
           {/* Help */}
           <div className="space-y-4">
             <h4 className="font-display text-sm font-semibold text-cream-100 uppercase tracking-wider">
-              Help
+              <T>Hulp</T>
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href={`${localePrefix}/pages/how-it-works`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  How It Works
+                  <T>Hoe het werkt</T>
                 </Link>
               </li>
               <li>
                 <Link href={`${localePrefix}/pages/frequently-asked-questions`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  FAQ
+                  <T>Veelgestelde vragen</T>
                 </Link>
               </li>
               <li>
                 <Link href={`${localePrefix}/pages/photo-guidelines`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  Photo Guidelines
+                  <T>Foto richtlijnen</T>
                 </Link>
               </li>
               <li>
                 <Link href={`${localePrefix}/pages/contact`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  Contact
+                  <T>Contact</T>
                 </Link>
               </li>
             </ul>
@@ -112,22 +112,22 @@ export function Footer() {
           {/* Company */}
           <div className="space-y-4">
             <h4 className="font-display text-sm font-semibold text-cream-100 uppercase tracking-wider">
-              Company
+              <T>Bedrijf</T>
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href={`${localePrefix}/pages/about-us`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  About Us
+                  <T>Over ons</T>
                 </Link>
               </li>
               <li>
                 <Link href={`${localePrefix}/pages/reviews`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  Reviews
+                  <T>Recensies</T>
                 </Link>
               </li>
               <li>
                 <Link href={`${localePrefix}/blogs`} className="text-stone-400 hover:text-cream-100 transition-colors">
-                  Blog
+                  <T>Blog</T>
                 </Link>
               </li>
             </ul>
@@ -143,22 +143,22 @@ export function Footer() {
           {/* Newsletter */}
           <div className="space-y-4">
             <h4 className="font-display text-sm font-semibold text-cream-100 uppercase tracking-wider">
-              Stay Updated
+              <T>Blijf op de hoogte</T>
             </h4>
             <p className="text-stone-400 text-sm">
-              Subscribe for exclusive offers and new arrivals.
+              <T>Schrijf je in voor exclusieve aanbiedingen en nieuwe producten.</T>
             </p>
             <form className="flex gap-2">
               <input
                 type="email"
-                placeholder="Your email"
+                placeholder="Je e-mailadres"
                 className="flex-1 px-4 py-2.5 rounded-md bg-stone-800 text-cream-100 placeholder-stone-500 text-sm border border-stone-700 focus:outline-none focus:ring-2 focus:ring-ochre-500 focus:border-transparent transition-all"
               />
               <button
                 type="submit"
                 className="px-5 py-2.5 bg-ochre-500 text-charcoal rounded-md hover:bg-ochre-600 transition-colors text-sm font-semibold tracking-wide"
               >
-                Subscribe
+                <T>Inschrijven</T>
               </button>
             </form>
           </div>
@@ -167,20 +167,20 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-stone-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-stone-500 text-sm">
-            &copy; {new Date().getFullYear()} La Vistique. All rights reserved.
+            &copy; {new Date().getFullYear()} La Vistique. <T>Alle rechten voorbehouden.</T>
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-stone-500 text-sm">
             <Link href={`${localePrefix}/policies/shipping-policy`} className="hover:text-cream-100 transition-colors">
-              Shipping
+              <T>Verzending</T>
             </Link>
             <Link href={`${localePrefix}/policies/refund-policy`} className="hover:text-cream-100 transition-colors">
-              Refunds
+              <T>Retouren</T>
             </Link>
             <Link href={`${localePrefix}/policies/privacy-policy`} className="hover:text-cream-100 transition-colors">
-              Privacy
+              <T>Privacy</T>
             </Link>
             <Link href={`${localePrefix}/policies/terms-of-service`} className="hover:text-cream-100 transition-colors">
-              Terms
+              <T>Voorwaarden</T>
             </Link>
           </div>
         </div>

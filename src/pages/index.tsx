@@ -14,10 +14,11 @@ export default function Home() {
     // Get browser language preference
     const browserLang = navigator.language.split("-")[0]?.toUpperCase();
     const supportedLangs = ["NL", "EN", "DE", "FR"];
-    const locale = supportedLangs.includes(browserLang ?? "") ? browserLang : "NL";
+    const detectedLocale = supportedLangs.includes(browserLang ?? "") ? browserLang : "NL";
 
-    router.replace(`/${locale?.toLowerCase()}`);
-  }, [router]);
+    router.replace(`/${detectedLocale?.toLowerCase()}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount only
 
   return (
     <>
